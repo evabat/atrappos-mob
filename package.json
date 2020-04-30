@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.9.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
     "@svgr/webpack": "4.3.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -15,6 +18,7 @@
     "babel-loader": "8.1.0",
     "babel-plugin-named-asset-import": "^0.3.6",
     "babel-preset-react-app": "^9.1.2",
+    "bootstrap": "^4.4.1",
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "css-loader": "3.4.2",
@@ -37,6 +41,7 @@
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.2",
     "mini-css-extract-plugin": "0.9.0",
+    "node-sass-chokidar": "^1.4.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.1.0",
@@ -46,6 +51,7 @@
     "postcss-safe-parser": "4.0.1",
     "react": "^16.13.1",
     "react-app-polyfill": "^1.0.6",
+    "react-bootstrap": "^1.0.1",
     "react-dev-utils": "^10.2.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
@@ -63,8 +69,13 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "start-js": "node scripts/start.js",
+    "build-js": "node scripts/build.js",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && npm run build-js",
+    "build-css": "node-sass-chokidar src/assets/scss -o src/assets/css",
+    "build-prod": "npm install && npm run build",
+    "watch-css": "npm run build-css && node-sass-chokidar src/assets/scss -o src/assets/css --watch --recursive",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -136,5 +147,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }

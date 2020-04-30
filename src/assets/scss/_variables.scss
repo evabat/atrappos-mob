@@ -1,0 +1,139 @@
+/* Dimensions */
+$app-width: 1200px;
+$aside-width: 300px;
+
+/* Colors */
+$gallery: #eaeaea;
+$dove-gray: #666666;
+$alto: #D8D4D5;
+$desert-storm: #f2f2f1;
+$shark: #212529;
+$bordeaux: #6C0022;
+$fan-green: #009F25;
+$bright-red: #A50000;
+$hot-cinnamon: #CB681A;
+$cold-turkey: #C9B4B7;
+$falcon: #785E62;
+$martini: #B0A6A7;
+$don-juan: #594648;
+$thunder: #362B30;
+$star-dust: #9A9A98;
+$skeptic: #C4E4CA;
+$killarney: #305A38;
+$dust-storm: #E4C4C6;
+$buccaneer: #5A3033;
+
+
+@mixin flex-box($direction, $justify, $align) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin inline-flex-box($direction, $justify, $align) {
+  display: inline-flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin font-mixin($weight, $size, $line, $family: $open-sans) {
+  font: normal normal $weight #{$size}/#{$line} $family;
+}
+
+@mixin reset-margin-block {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+@mixin connect-btn-styles($bg-color, $color, $border-width, $border-clr) {
+  background-color: $bg-color;
+  color: $color;
+  border: $border-width solid $border-clr;
+}
+
+@mixin reset-btn-styles ($brdr-radius: 0, $padding: 5px 10px,  $outline-clr: transparent) {
+  border-radius: $brdr-radius !important;
+  outline: $outline-clr !important;
+  padding: $padding;
+}
+
+@mixin box-shadow($dimensions, $color) {
+  -moz-box-shadow: $dimensions $color;
+  -webkit-box-shadow: $dimensions $color;
+  box-shadow: $dimensions $color;
+}
+
+@mixin new-margin-block($margin-vertical, $margin-inline, $padding-inline) {
+  margin-block-start: $margin-vertical;
+  margin-block-end: $margin-vertical;
+  margin-inline-start:  $margin-inline;
+  margin-inline-end:  $margin-inline;
+  padding-inline-start:  $padding-inline;
+}
+
+/* Animation */
+
+@mixin animation-mixin($anim) {
+  -webkit-animation: $anim;
+  -moz-animation: $anim;
+  -o-animation: $anim;
+  animation: $anim;
+}
+
+.inline-arrow {
+  border: solid $dove-gray;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 2px;
+  opacity: 0.6;
+  &.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+  }
+}
+
+/* Keyframes */
+
+@keyframes counterClockwiseSpin {
+  0%  {transform: rotate(180deg);}
+  100% {transform: rotate(0deg);}
+}
+
+@keyframes clockwiseSpin {
+  0%  {transform: rotate(0deg);}
+  100% {transform: rotate(180deg);}
+}
+
+@keyframes lds-circle {
+  0%, 100% {
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+  }
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(1800deg);
+    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  }
+  100% {
+    transform: rotateY(3600deg);
+  }
+}
+
+/* SPRITES */
+//@mixin banks-sprite($width, $height, $posx, $posy) {
+//  width: $width;
+//  height: $height;
+//  display: block;
+//  background: url('../img/banks_sprite.png') $posx $posy;
+//  overflow: hidden;
+//}
+
+
