@@ -45,7 +45,7 @@ const App = (props) => {
           <section>
             <Switch>
               <Route exact path='/map' render={props => <CustomMap {...props} />}/>
-              <Route path="/" render={()=> <Redirect to="/"/>}/>
+              <Route path="/" render={()=> <Redirect to="/map"/>}/>
             </Switch>
           </section>
         </main>
