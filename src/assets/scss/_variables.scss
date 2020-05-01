@@ -127,13 +127,11 @@ $buccaneer: #5A3033;
   }
 }
 
-/* SPRITES */
-//@mixin banks-sprite($width, $height, $posx, $posy) {
-//  width: $width;
-//  height: $height;
-//  display: block;
-//  background: url('../img/banks_sprite.png') $posx $posy;
-//  overflow: hidden;
-//}
+.location-gps {
+    background: url('../img/locate-gps.png') -1px 0;
+    width: 26px;
+    height: 26px;
+    display: block;
+}
 
 

@@ -92,7 +92,12 @@
   100% {
     transform: rotateY(3600deg); } }
 
-/* SPRITES */
+.location-gps {
+  background: url("../img/locate-gps.png") -1px 0;
+  width: 26px;
+  height: 26px;
+  display: block; }
+
 html,
 body {
   margin: 0;

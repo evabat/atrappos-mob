@@ -1,23 +1,55 @@
-import React from 'react';
+import React, {useEffect, useReducer} from 'react';
+import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
+import update from 'immutability-helper';
 import logo from './logo.png';
+import CustomMap from "./js/components/CustomMap";
+import localforage from "localforage";
 
-function App() {
+export const AppContext = React.createContext();
+
+function reducer(state, action) {
+  return update(state, {
+    toast: {$set: action.toast},
+  });
+}
+
+const initialState = {
+  dummyVar: { dummyProp: false}
+};
+
+
+
+const App = (props) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    localforage.config({
+      name: 'atrapposIndexedDB',
+      storeName: 'keyvaluepairs',
+      driver: localforage.INDEXEDDB
+    });
+  }, []);
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AppContext.Provider value={{ state, dispatch }}>
+        <header>
+          {/*<section>*/}
+          {/*  <Link to="/" className="logo__link">*/}
+          {/*    <img src={logo} alt="Atrappos Logo" className='logo__img'/>vacas*/}
+          {/*  </Link>*/}
+          {/*</section>*/}
+        </header>
+        <main>
+          <section>
+            <Switch>
+              <Route exact path='/map' render={props => <CustomMap {...props} />}/>
+              <Route path="/" render={()=> <Redirect to="/"/>}/>
+            </Switch>
+          </section>
+        </main>
+      </AppContext.Provider>
     </div>
   );
 }
