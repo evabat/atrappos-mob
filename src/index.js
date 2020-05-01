@@ -8,7 +8,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <Router basename='/Atrappos/'>
+    <Router basename='/atrappos-mob/'>
         <App />
     </Router>,
   document.getElementById('root')
