@@ -2,7 +2,7 @@
   "name": "atrappos-mob",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://evabat.github.io/atrappos-mob/",
+  "homepage": "https://evabat.github.io/atrappos-mob",
   "dependencies": {
     "@babel/core": "7.9.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
@@ -81,8 +81,6 @@
   "scripts": {
     "start-js": "node scripts/start.js",
     "build-js": "node scripts/build.js",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "npm-run-all -p watch-css start-js",
     "build": "npm run build-css && npm run build-js",
     "build-css": "node-sass-chokidar src/assets/scss -o src/assets/css",
