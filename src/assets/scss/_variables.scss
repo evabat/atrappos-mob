@@ -1,28 +1,11 @@
 /* Dimensions */
-$app-width: 1200px;
-$aside-width: 300px;
 
 /* Colors */
+$white: #ffffff;
 $gallery: #eaeaea;
 $dove-gray: #666666;
-$alto: #D8D4D5;
-$desert-storm: #f2f2f1;
-$shark: #212529;
-$bordeaux: #6C0022;
-$fan-green: #009F25;
-$bright-red: #A50000;
-$hot-cinnamon: #CB681A;
-$cold-turkey: #C9B4B7;
-$falcon: #785E62;
-$martini: #B0A6A7;
-$don-juan: #594648;
-$thunder: #362B30;
-$star-dust: #9A9A98;
-$skeptic: #C4E4CA;
-$killarney: #305A38;
-$dust-storm: #E4C4C6;
-$buccaneer: #5A3033;
-
+$porcelain: #F9FBFB;
+$keppel: #40B3A2;
 
 @mixin flex-box($direction, $justify, $align) {
   display: flex;
@@ -38,7 +21,7 @@ $buccaneer: #5A3033;
   align-items: $align;
 }
 
-@mixin font-mixin($weight, $size, $line, $family: $open-sans) {
+@mixin font-mixin($weight, $size, $line, $family: $montserrat) {
   font: normal normal $weight #{$size}/#{$line} $family;
 }
 
@@ -74,6 +57,13 @@ $buccaneer: #5A3033;
   margin-inline-start:  $margin-inline;
   margin-inline-end:  $margin-inline;
   padding-inline-start:  $padding-inline;
+}
+/* Transition */
+@mixin transition-mixin($property, $duration, $curve){
+  -webkit-transition: $property $duration $curve;
+  -moz-transition: $property $duration $curve;
+  -o-transition: $property $duration $curve;
+  transition: $property $duration $curve;
 }
 
 /* Animation */
@@ -128,9 +118,9 @@ $buccaneer: #5A3033;
 }
 
 .location-gps {
-    background: url('../img/locate-gps.png') -1px 0;
-    width: 26px;
-    height: 26px;
+    background: url('../img/locate-gps.png') center center;
+    width: 100%;
+    height: 100%;
     display: block;
 }
 

@@ -55,6 +55,7 @@
 
 /* Dimensions */
 /* Colors */
+/* Transition */
 /* Animation */
 .inline-arrow {
   border: solid #666666;
@@ -93,9 +94,9 @@
     transform: rotateY(3600deg); } }
 
 .location-gps {
-  background: url("../img/locate-gps.png") -1px 0;
-  width: 26px;
-  height: 26px;
+  background: url("../img/locate-gps.png") center center;
+  width: 100%;
+  height: 100%;
   display: block; }
 
 html,
@@ -116,35 +117,9 @@ body {
 .App {
   height: 100vh; }
 
-.App {
-  text-align: center; }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear; } }
-
-.App-header {
-  background-color: purple;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white; }
-
-.App-link {
-  color: #61dafb; }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg); }
-  to {
-    transform: rotate(360deg); } }
+header {
+  height: 40px;
+  padding: 0 20px; }
 
 .leaflet-control-locate a {
   font-size: 1.4em;
@@ -168,3 +143,123 @@ body {
     transform: scale(0.8, 0.8); }
   100% {
     stroke-width: 1; } }
+
+.bottom-bar {
+  height: 4rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #40B3A2;
+  z-index: 1010; }
+  .bottom-bar nav {
+    height: 4rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; }
+    .bottom-bar nav a {
+      text-decoration: none !important;
+      width: 100%;
+      height: 100%;
+      padding: 5px 5px 8px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center; }
+      .bottom-bar nav a i {
+        font-size: 18px;
+        color: #ffffff;
+        opacity: 0.6;
+        margin-bottom: -3px; }
+        .bottom-bar nav a i.polyline-icon {
+          transform: rotate(-90deg); }
+          .bottom-bar nav a i.polyline-icon:after {
+            content: "";
+            border-left: 6px solid #40B3A2;
+            display: block;
+            position: absolute;
+            top: 8.4px;
+            height: 7.2px; }
+      .bottom-bar nav a span {
+        color: #ffffff;
+        letter-spacing: 1px;
+        opacity: 0.6;
+        text-align: center;
+        font: normal normal 500 10px/1.8 "Montserrat", sans-seriff; }
+      .bottom-bar nav a.--active i {
+        opacity: 1;
+        font-size: 22px;
+        -webkit-transition: all 0.1s linear;
+        -moz-transition: all 0.1s linear;
+        -o-transition: all 0.1s linear;
+        transition: all 0.1s linear; }
+        .bottom-bar nav a.--active i.polyline-icon:after {
+          top: 12px;
+          height: 8px; }
+      .bottom-bar nav a.--active span {
+        opacity: 1; }
+
+.bottom-container {
+  bottom: 4rem;
+  display: block;
+  width: 100%;
+  z-index: 1000;
+  position: absolute;
+  background-color: #F9FBFB;
+  max-height: 10px;
+  -webkit-transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1);
+  -moz-transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1);
+  -o-transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1);
+  transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1); }
+  .bottom-container.expanded {
+    max-height: 200px;
+    -webkit-transition: max-height 0.5s ease-in-out;
+    -moz-transition: max-height 0.5s ease-in-out;
+    -o-transition: max-height 0.5s ease-in-out;
+    transition: max-height 0.5s ease-in-out; }
+  .bottom-container .toggle-expand {
+    width: 35px;
+    height: 20px;
+    background-color: #F9FBFB;
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    position: absolute;
+    left: calc(50% - 20px);
+    top: -19px;
+    border-top: 1px solid #40B3A2;
+    border-left: 1px solid #40B3A2;
+    border-right: 1px solid #40B3A2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; }
+    .bottom-container .toggle-expand i {
+      color: #40B3A2;
+      font-size: 35px;
+      line-height: 35px;
+      margin-top: 5px;
+      -webkit-transition: transform 0.2s linear;
+      -moz-transition: transform 0.2s linear;
+      -o-transition: transform 0.2s linear;
+      transition: transform 0.2s linear; }
+      .bottom-container .toggle-expand i.angle-down {
+        transform: rotate(180deg); }
+      .bottom-container .toggle-expand i .angle-up {
+        transform: rotate(-180deg); }
+  .bottom-container__content {
+    padding: 15px;
+    border-top: 1px solid #40B3A2; }
+
+.clearfix:before,
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  overflow: hidden; }
+
+.clearfix:after {
+  clear: both; }
+
+.clearfix {
+  zoom: 1; }
