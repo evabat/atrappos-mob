@@ -20,9 +20,10 @@ const southWest = L.latLng( 37.273073, 23.033121),
 
 const locateOptions = {
     position: 'topright',
-    icon: 'location-gps',
-    drawCircle: false,
+    // drawCircle: false,
     enableHighAccuracy: true,
+    icon: "location-gps",
+    showCompass: true,
     strings: {
         title: 'Locate me!'
     },

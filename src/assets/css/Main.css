@@ -93,11 +93,28 @@
   100% {
     transform: rotateY(3600deg); } }
 
+.leaflet-control-locate.following {
+  -moz-box-shadow: 1px 1px 8px 2px #666666;
+  -webkit-box-shadow: 1px 1px 8px 2px #666666;
+  box-shadow: 1px 1px 8px 2px #666666; }
+  .leaflet-control-locate.following .location-gps {
+    filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(190deg) brightness(160%) contrast(100%); }
+
+.leaflet-control-locate.disabled {
+  opacity: 0.5; }
+
+.leaflet-control-locate .leaflet-bar-part.leaflet-bar-part-single {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; }
+
 .location-gps {
-  background: url("../img/locate-gps.png") center center;
-  width: 100%;
-  height: 100%;
-  display: block; }
+  background: url("../img/icon-gps.svg") center center;
+  width: 22px;
+  height: 22px;
+  display: block;
+  filter: invert(27%) sepia(51%) saturate(200%) hue-rotate(40deg) brightness(180%) contrast(60%); }
 
 html,
 body {
@@ -120,29 +137,6 @@ body {
 header {
   height: 40px;
   padding: 0 20px; }
-
-.leaflet-control-locate a {
-  font-size: 1.4em;
-  color: #444;
-  cursor: pointer; }
-
-.leaflet-control-locate.active a {
-  color: #2074b6; }
-
-.leaflet-control-locate.active.following a {
-  color: #fc8428; }
-
-.leaflet-control-locate-location circle {
-  animation: leaflet-control-locate-throb 4s ease infinite; }
-
-@keyframes leaflet-control-locate-throb {
-  0% {
-    stroke-width: 1; }
-  50% {
-    stroke-width: 3;
-    transform: scale(0.8, 0.8); }
-  100% {
-    stroke-width: 1; } }
 
 .bottom-bar {
   height: 4rem;

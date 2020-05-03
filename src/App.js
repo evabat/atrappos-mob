@@ -13,11 +13,13 @@ export const AppContext = React.createContext();
 function reducer(state, action) {
   return update(state, {
     recording: {$set: action.recording},
+    gpsLocate: {$set: action.gpsLocate}
   });
 }
 
 const initialState = {
-  recording: false
+  recording: false,
+  gpsLocate: false
 };
 
 const App = (props) => {
