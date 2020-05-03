@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import * as L from 'leaflet';
+import 'leaflet-draw';
 import {CachedTileLayer} from '@yaga/leaflet-cached-tile-layer';
 import {
     AttributionControl,
@@ -11,6 +12,7 @@ import {
 import { GestureHandling } from "leaflet-gesture-handling";
 import LocateControl from './LocateControl.js';
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
 
 
@@ -34,6 +36,8 @@ const locateOptions = {
 };
 
 
+
+
 class CustomMap extends Component {
     constructor(props) {
         super(props);
@@ -50,6 +54,7 @@ class CustomMap extends Component {
         }
 
         this._onFeatureGroupReady = this._onFeatureGroupReady.bind(this);
+        this.addDrawControl = this.addDrawControl.bind(this);
     }
 
 
@@ -88,7 +93,53 @@ class CustomMap extends Component {
                     console.log(_this.state.currPoly)
                 })
             }
-        })
+        });
+
+        this.addDrawControl();
+    }
+
+    addDrawControl() {
+        let fgLoaded = false;
+        const map = this.mapRef.current.leafletElement;
+        let _this = this;
+        const interval = setInterval(() => {
+            if (_this._editableFG) {
+                const drawPluginOptions = {
+                    position: 'topright',
+                    draw: {
+                        polyline: {
+                            shapeOptions:  {
+                                color: _this.state.category,
+                                weight: _this.state.difficulty,
+                                opacity: 1
+                            }},
+                        rectangle: false,
+                        marker: true,
+                        circlemarker: false,
+                        circle: false,
+                        polygon: false
+                    },
+                    edit: {
+                        featureGroup: _this._editableFG.leafletElement, //REQUIRED!!
+                        remove: true
+                    }
+                };
+                var drawControl = new L.Control.Draw(drawPluginOptions);
+                map.addControl(drawControl);
+
+                map.on('draw:created', function(e) {
+                    var type = e.layerType,
+                        layer = e.layer;
+
+                    if (type === 'marker') {
+                        layer.bindPopup('A popup!');
+                    }
+                    _this._editableFG.leafletElement.addLayer(layer);
+                    alert('created')
+                });
+                clearInterval(interval);
+            }
+        }, 1000);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -106,7 +157,6 @@ class CustomMap extends Component {
     _onFeatureGroupReady (reactFGref) {
         if (reactFGref) {
             this._editableFG = reactFGref;
-            console.log(reactFGref)
         }
     };
 
