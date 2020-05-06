@@ -1,0 +1,38 @@
+.leaflet-control-locate {
+  &.following {
+    @include box-shadow(1px 1px 8px 2px, $dove-gray);
+    .location-gps {
+      filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(190deg) brightness(160%) contrast(100%);
+    }
+  }
+
+  &.requesting {
+    @include box-shadow(1px 1px 8px 2px, $dove-gray);
+    .loading-gps {
+      filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(190deg) brightness(160%) contrast(100%);
+    }
+  }
+  &.disabled {
+    opacity: 0.5;
+  }
+  .leaflet-bar-part.leaflet-bar-part-single {
+    @include flex-box(row, center, center);
+  }
+}
+
+.location-gps {
+  background: url('../img/icon-gps.svg') center center;
+  width: 22px;
+  height: 22px;
+  display: block;
+  filter: invert(27%) sepia(51%) saturate(200%) hue-rotate(40deg) brightness(180%) contrast(60%);
+}
+
+.loading-gps {
+  background: url('../img/icon-hourglass.svg') center center;
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: invert(27%) sepia(51%) saturate(200%) hue-rotate(40deg) brightness(180%) contrast(60%);
+}
+

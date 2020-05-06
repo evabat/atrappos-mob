@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import {connect} from "react-redux";
 import * as L from 'leaflet';
 import 'leaflet-draw';
 import {CachedTileLayer} from '@yaga/leaflet-cached-tile-layer';
+import PropTypes from "prop-types";
 import {
     AttributionControl,
     Map,
@@ -14,6 +16,7 @@ import LocateControl from './LocateControl.js';
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
+import {loginUser, updateUser} from "../../services/authService";
 
 
 const southWest = L.latLng( 37.273073, 23.033121),
@@ -22,9 +25,10 @@ const southWest = L.latLng( 37.273073, 23.033121),
 
 const locateOptions = {
     position: 'topright',
-    // drawCircle: false,
+    drawCircle: false,
     enableHighAccuracy: true,
     icon: "location-gps",
+    iconLoading: "loading-gps",
     showCompass: true,
     strings: {
         title: 'Locate me!'
@@ -34,8 +38,6 @@ const locateOptions = {
         watch: true
     }
 };
-
-
 
 
 class CustomMap extends Component {
@@ -49,8 +51,8 @@ class CustomMap extends Component {
             currCenter: null,
             recording: props.recording,
             currPoly: [],
-            difficulty: 4,
-            category: "#8364D8"
+            objective: props.objectiveSelection,
+            subjective: props.subjectiveSelection
         }
 
         this._onFeatureGroupReady = this._onFeatureGroupReady.bind(this);
@@ -87,7 +89,6 @@ class CustomMap extends Component {
                     console.log(prevState.currPoly)
                     return {
                         currPoly: prevState.currPoly.length <= 0 ? [[loc.latitude, loc.longitude]] : [...prevState.currPoly, [loc.latitude, loc.longitude]]
-
                     }
                 }, () => {
                     console.log(_this.state.currPoly)
@@ -99,7 +100,6 @@ class CustomMap extends Component {
     }
 
     addDrawControl() {
-        let fgLoaded = false;
         const map = this.mapRef.current.leafletElement;
         let _this = this;
         const interval = setInterval(() => {
@@ -109,8 +109,8 @@ class CustomMap extends Component {
                     draw: {
                         polyline: {
                             shapeOptions:  {
-                                color: _this.state.category,
-                                weight: _this.state.difficulty,
+                                color: _this.state.subjective,
+                                weight: _this.state.objective,
                                 opacity: 1
                             }},
                         rectangle: false,
@@ -124,22 +124,23 @@ class CustomMap extends Component {
                         remove: true
                     }
                 };
-                var drawControl = new L.Control.Draw(drawPluginOptions);
+                let drawControl = new L.Control.Draw(drawPluginOptions);
                 map.addControl(drawControl);
 
                 map.on('draw:created', function(e) {
                     var type = e.layerType,
                         layer = e.layer;
 
-                    if (type === 'marker') {
+                    if (type === 'polyline') {
                         layer.bindPopup('A popup!');
+                        console.log(layer.toGeoJSON())
                     }
                     _this._editableFG.leafletElement.addLayer(layer);
-                    alert('created')
+
                 });
                 clearInterval(interval);
             }
-        }, 1000);
+        }, 300);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -150,7 +151,6 @@ class CustomMap extends Component {
             })
         }
     }
-
 
     _editableFG = null;
 
@@ -164,7 +164,7 @@ class CustomMap extends Component {
         return (
             <Map
                 ref={this.mapRef}
-                style={{height: "calc(100vh - 4rem - 50px)", width: "100%"}}
+                style={{height: "calc(100vh - 35px)", width: "100%"}}
                 minZoom={8}
                 maxZoom={19}
                 gestureHandling={true}
@@ -179,15 +179,15 @@ class CustomMap extends Component {
                     bounds={bounds}
                 />
                 <AttributionControl position="topright" prefix={false} />
-                <LocateControl options={locateOptions}/>
+                <LocateControl options={locateOptions} startDirectly/>
                 <FeatureGroup ref={ (reactFGref) => {
                     this._onFeatureGroupReady(reactFGref)}}>
                     {this.state.currPoly && this.state.currPoly.length > 0 ?
                         <React.Fragment>
                             <Polyline key={"polyline"}
-                                     positions={this.state.currPoly}
-                                      color={this.state.category}
-                                      weight={this.state.difficulty}
+                                      positions={this.state.currPoly}
+                                      color={this.state.subjective}
+                                      weight={this.state.objective}
                             />
 
                         </React.Fragment>
@@ -200,4 +200,19 @@ class CustomMap extends Component {
     }
 }
 
-export default CustomMap;
+CustomMap.propTypes = {
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth,
+    recording: state.recording,
+    gpsLocate: state.gpsLocate,
+    objectiveSelection: state.objectiveSelection,
+    subjectiveSelection: state.subjectiveSelection
+});
+
+export default connect(
+    mapStateToProps,
+    { loginUser, updateUser }
+)(CustomMap);

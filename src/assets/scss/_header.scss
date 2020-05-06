@@ -1,4 +1,21 @@
 header {
-  height: 40px;
-  padding: 0 20px;
+  height: 34px;
+  padding: 0 15px;
+  background-color: $keppel;
+}
+
+.logo--map {
+  z-index: 3;
+  left: 11px;
+  height: 28px;
+  margin-top: 3px;
+  @include inline-flex-box(row, flex-start, center);
+  img {
+    width: 24px;
+  }
+  h1 {
+    font-size: 12px !important;
+    color: $porcelain;
+    margin: 0 0 0 5px;
+  }
 }

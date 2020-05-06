@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
-import {AppContext} from "../../../App";
+import {AppContext} from "../../App";
 import {
-    faRecordVinyl
+    faRecordVinyl, faStop
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {mapEvent} from "../../../lib/utils";
+import {mapEvent} from "../../lib/utils";
 
 export const LocateAndRecordContent = (props) => {
     const {prop} = props;
@@ -28,7 +28,8 @@ export const LocateAndRecordContent = (props) => {
     }
     return (
         <div className="locate-and-record__content bottom__content">
-            <button className="record__btn"
+            <h5>Record a path</h5>
+            <button className={"record__btn" + (state.recording ? " record__btn--recording": "")}
                     onClick={(e)=> {
                         if(GpsIsOn(e)) {
                             dispatch({ ...state, recording: !state.recording});
@@ -38,9 +39,9 @@ export const LocateAndRecordContent = (props) => {
                         }
                     }}>
                 <i>
-                    <FontAwesomeIcon icon={faRecordVinyl} />
+                    <FontAwesomeIcon icon={!state.recording ? faRecordVinyl : faStop} />
                 </i>
-                <span>Start recording</span>
+                <span>{!state.recording ? "Start " : "Stop "} recording</span>
             </button>
         </div>
     );

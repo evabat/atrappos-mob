@@ -1,57 +1,19 @@
 .bottom-container {
-  bottom: 4rem;
+  bottom: 0;
   display: block;
   width: 100%;
   z-index: 1000;
-  position: absolute;
+  position: fixed;
   background-color: $porcelain;
-  max-height: 10px;
+  max-height: 0;
+  @include box-shadow(0 -5px 5px -5px, $dove-gray);
   @include transition-mixin(max-height, 0.5s, Cubic-bezier(0, 1, 0, 1));
   &.expanded {
     max-height: 200px;
+    padding-bottom: 2rem;
     @include transition-mixin(max-height, 0.5s, ease-in-out);
   }
-  .toggle-expand {
-    width: 35px;
-    height: 20px;
-    background-color: $porcelain;
-    padding: 5px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    position: absolute;
-    left: calc(50% - 20px);
-    top: -19px;
-    border-top: 1px solid $keppel;
-    border-left: 1px solid $keppel;
-    border-right: 1px solid $keppel;
-    @include flex-box(column, center, center);
-    i {
-      color: $keppel;
-      font-size: 35px;
-      line-height: 35px;
-      margin-top: 5px;
-      @include transition-mixin(transform, 0.2s, linear);
-
-      &.angle-down {
-        transform: rotate(180deg);
-      }
-      .angle-up {
-        transform: rotate(-180deg);
-      }
-    }
-  }
   &__content {
-    padding: 15px;
-    border-top: 1px solid $keppel;
+    padding: 10px 15px 2rem 15px;
   }
 }
-
-.clearfix:before,
-.clearfix:after {
-  content: ".";
-  display: block;
-  height: 0;
-  overflow: hidden;
-}
-.clearfix:after { clear: both; }
-.clearfix { zoom: 1; }

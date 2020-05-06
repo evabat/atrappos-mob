@@ -1,12 +1,29 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleUp} from "@fortawesome/free-solid-svg-icons";
 import {LocateAndRecordContent} from "../content/LocateAndRecordContent";
 import {DrawPathContent} from "../content/DrawPathContent";
+import {withRouter} from "react-router-dom";
+import {AppContext} from "../../App";
 
-export const BottomContainer = (props) => {
-    const {content} = props;
+const BottomContainerComponent = (props) => {
+    const {content, location} = props;
+    const {state} = useContext(AppContext);
     const [expanded, setExpanded] = useState(true);
+
+    useEffect(() => {
+        setExpanded(state.bottomExpanded)
+    },[state.bottomExpanded]);
+
+    if (
+        location.pathname.match(/home/) ||
+        location.pathname.match(/register/) ||
+        location.pathname.match(/login/) ||
+        location.pathname.match(/change\/password/)
+    ){
+        return null;
+    }
+
 
     const renderSwitch = (cont) => {
         switch(cont) {
@@ -19,14 +36,11 @@ export const BottomContainer = (props) => {
 
     return (
         <div className={"bottom-container" + (expanded ? " expanded": "")}>
-            <div className="toggle-expand" onClick={()=>setExpanded(!expanded)}>
-                <i className={expanded ? "angle-down" : "angle-up"}>
-                    <FontAwesomeIcon icon={faAngleUp} />
-                </i>
-            </div>
             <div className="bottom-container__content">
                 {renderSwitch(content)}
             </div>
         </div>
     );
 };
+
+export const BottomContainer = withRouter(BottomContainerComponent);

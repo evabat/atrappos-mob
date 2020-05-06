@@ -1,11 +1,15 @@
 import React from 'react';
-import {AppContext} from "../../../App";
+
+import {Logo} from "./Logo";
 
 export const Header = (props) => {
     const {prop} = props;
     return (
         <header>
-            {"Atrappos"}
+            <div className="header">
+                <Logo place="map" />
+            </div>
+
         </header>
     );
 };

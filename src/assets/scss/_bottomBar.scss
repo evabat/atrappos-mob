@@ -1,58 +1,92 @@
 .bottom-bar {
-  height: 4rem;
+  height: 3rem;
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: $keppel;
   z-index: 1010;
+  display: flex;
+  &__part {
+    @include flex-box(row, space-between, center);
+    width: 50%;
+    background-color: $keppel;
+    height: 100%;
+    &--left {
+      border-top-right-radius: 80px;
+      a:nth-child(2) {
+        margin-right: 10px;
+        border-top-right-radius: 80px;
+      }
+    }
+    &--right {
+      border-top-left-radius: 80px;
+      a:first-child {
+        margin-left: 10px;
+        border-top-left-radius: 80px;
+      }
+    }
+  }
+
+    &:before {
+
+  }
   nav {
-    height: 4rem;
+    height: 3rem;
+    width: 100%;
     @include flex-box(row, space-between, center);
     a {
       text-decoration: none !important;
       width:  100%;
       height: 100%;
-      padding: 5px 5px 8px 5px;
+      padding: 5px;
       @include flex-box(column, flex-end, center);
       i {
-        font-size: 18px;
-        color: $white;
+        font-size: 16px;
+        color: $porcelain;
         opacity: 0.6;
         margin-bottom: -3px;
-        &.polyline-icon {
-          transform: rotate(-90deg);
-          &:after {
-            content: "";
-            border-left: 6px solid $keppel;
-            display: block;
-            position: absolute;
-            top: 8.4px;
-            height: 7.2px;
-          }
-        }
       }
       span {
-        color: $white;
+        color: $porcelain;
         letter-spacing: 1px;
         opacity: 0.6;
         text-align: center;
-        @include font-mixin(500, 10px, 1.8);
+        white-space: nowrap;
+        @include font-mixin(500, 9px, 1.6);
       }
       &.--active {
         i {
           opacity: 1;
-          font-size: 22px;
+          font-size: 20px;
           @include transition-mixin(all, 0.1s, linear);
-          &.polyline-icon {
-            &:after {
-              top: 12px;
-              height: 8px;
-            }
-          }
         }
         span {
           opacity: 1;
         }
+      }
+    }
+  }
+  .toggle-expand {
+    width: 34px;
+    height: 34px;
+    background-color: $porcelain;
+    padding: 5px;
+    border-radius: 50%;
+    position: absolute;
+    left: calc(50% - 17px);
+    cursor: pointer;
+    border: 2px solid $keppel;
+    @include flex-box(column, center, center);
+    bottom: 5px;
+    i {
+      color: $keppel;
+      font-size: 25px;
+      line-height: 30px;
+      @include transition-mixin(transform, 0.2s, linear);
+      &.angle-down {
+        transform: rotate(180deg);
+      }
+      .angle-up {
+        transform: rotate(-180deg);
       }
     }
   }
