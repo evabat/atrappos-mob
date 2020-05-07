@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState} from 'react';
-import 'react-dropdown/style.css';
 import {AppContext} from "../../App";
 export default (props) => {
     const { list, type } = props;
@@ -8,10 +7,14 @@ export default (props) => {
     const [subjSelectedValue, setSubjSelectedValue] = useState(list[0]);
     const {state, dispatch} = useContext(AppContext)
 
-    const onSelect = (e, type) => {
-        console.log(e.target)
-        // dispatch({...state, objectiveSelection: result[0].value})
-        // dispatch({...state, objectiveSelection: result[0].value})
+    const onChange = (e, type) => {
+        console.log(e.target);
+        if (type === "objective") {
+            dispatch({...state, objectiveSelection: e.target.value})
+        }
+        if (type === "subjective") {
+            dispatch({...state, subjectiveSelection: e.target.value})
+        }
     }
 
     useEffect(()=> {
@@ -32,8 +35,9 @@ export default (props) => {
         <div className={"radio-container " + type}>
             <div className="radio-tile-group">
                 {list.map((el) => {
-                    return <div className="input-container">
+                    return <div className="input-container" key={el.className + "-key"}>
                         <input id={type + "-" + el.className}
+                               onChange={(e)=> onChange(e, type)}
                                className="radio-button"
                                type="radio" name="radio"
                                value={el.value}
