@@ -1,10 +1,8 @@
 import React, {useContext} from 'react';
 import {NavLink, withRouter} from "react-router-dom";
 import {
-    faAngleUp,
     faDrawPolygon,
     faLocationArrow, faMinus, faPlus,
-    faQuestionCircle,
     faRoute, faUsers
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

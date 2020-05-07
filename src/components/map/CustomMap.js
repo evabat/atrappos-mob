@@ -4,6 +4,7 @@ import * as L from 'leaflet';
 import 'leaflet-draw';
 import {CachedTileLayer} from '@yaga/leaflet-cached-tile-layer';
 import PropTypes from "prop-types";
+import {AppContext} from "../../App";
 import {
     AttributionControl,
     Map,
@@ -55,9 +56,11 @@ class CustomMap extends Component {
             subjective: props.subjectiveSelection
         }
 
+
         this._onFeatureGroupReady = this._onFeatureGroupReady.bind(this);
         this.addDrawControl = this.addDrawControl.bind(this);
     }
+
 
 
     UNSAFE_componentWillMount() {
@@ -70,7 +73,6 @@ class CustomMap extends Component {
     componentDidMount() {
         const map = this.mapRef.current.leafletElement;
         let _this = this;
-
         const leafletCachedTileLayer = new CachedTileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             databaseName: 'tile-cache-data', // optional
@@ -86,17 +88,29 @@ class CustomMap extends Component {
         map.on('locationfound', function(loc) {
             if (_this.state.recording) {
                 _this.setState(prevState => {
-                    console.log(prevState.currPoly)
+                    console.log('prev POLY on location found', prevState.currPoly)
                     return {
                         currPoly: prevState.currPoly.length <= 0 ? [[loc.latitude, loc.longitude]] : [...prevState.currPoly, [loc.latitude, loc.longitude]]
                     }
                 }, () => {
-                    console.log(_this.state.currPoly)
+                    console.log("prev POLY on location found after set state",_this.state.currPoly)
                 })
             }
         });
 
         this.addDrawControl();
+
+        map.on('draw:created', function(e) {
+            var type = e.layerType,
+                layer = e.layer;
+
+            if (type === 'polyline') {
+                layer.bindPopup('A popup!');
+                console.log(layer.toGeoJSON())
+            }
+            // _this._editableFG.leafletElement.addLayer(layer);
+
+        });
     }
 
     addDrawControl() {
@@ -114,7 +128,7 @@ class CustomMap extends Component {
                                 opacity: 1
                             }},
                         rectangle: false,
-                        marker: true,
+                        marker: false,
                         circlemarker: false,
                         circle: false,
                         polygon: false
@@ -127,17 +141,6 @@ class CustomMap extends Component {
                 let drawControl = new L.Control.Draw(drawPluginOptions);
                 map.addControl(drawControl);
 
-                map.on('draw:created', function(e) {
-                    var type = e.layerType,
-                        layer = e.layer;
-
-                    if (type === 'polyline') {
-                        layer.bindPopup('A popup!');
-                        console.log(layer.toGeoJSON())
-                    }
-                    _this._editableFG.leafletElement.addLayer(layer);
-
-                });
                 clearInterval(interval);
             }
         }, 300);
@@ -148,6 +151,18 @@ class CustomMap extends Component {
             this.setState({
                 ...this.state,
                 recording: this.props.recording
+            })
+        }
+        if (prevProps.objectiveSelection !== this.props.objectiveSelection) {
+            this.setState({
+                ...this.state,
+                objective: this.props.objectiveSelection
+            })
+        }
+        if (prevProps.subjectiveSelection !== this.props.subjectiveSelection) {
+            this.setState({
+                ...this.state,
+                subjective: this.props.subjectiveSelection
             })
         }
     }
@@ -206,10 +221,6 @@ CustomMap.propTypes = {
 
 const mapStateToProps = state => ({
     auth: state.auth,
-    recording: state.recording,
-    gpsLocate: state.gpsLocate,
-    objectiveSelection: state.objectiveSelection,
-    subjectiveSelection: state.subjectiveSelection
 });
 
 export default connect(

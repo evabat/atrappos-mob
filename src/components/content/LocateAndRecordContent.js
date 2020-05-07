@@ -5,19 +5,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {mapEvent} from "../../lib/utils";
+import {AddEditPath} from "./AddEditPath";
+import {EvaluationAccordion} from "../ui/EvaluationAccordion";
 
 export const LocateAndRecordContent = (props) => {
     const {prop} = props;
     const {state, dispatch} = useContext(AppContext);
 
     const GpsIsOn = (e) => {
-        let gpsIsOn = document.getElementsByClassName("leaflet-control-locate leaflet-bar leaflet-control active following");
+        let gpsIsOn = document.getElementsByClassName("leaflet-control-locate leaflet-bar leaflet-control active");
         return gpsIsOn && gpsIsOn.length > 0;
 
     }
 
     const DisableGpsBtn = (disable) => {
-        let gpsBtn = document.getElementsByClassName("leaflet-control-locate leaflet-bar leaflet-control active following");
+        let gpsBtn = document.getElementsByClassName("leaflet-control-locate leaflet-bar leaflet-control active");
         gpsBtn[0].style.pointerEvents = disable ? "none" : "initial";
         if (disable) {
             gpsBtn[0].classList.add("disabled")
@@ -43,6 +45,10 @@ export const LocateAndRecordContent = (props) => {
                 </i>
                 <span>{!state.recording ? "Start " : "Stop "} recording</span>
             </button>
+            {state.recording ?
+
+                <EvaluationAccordion />:null
+            }
         </div>
     );
 };

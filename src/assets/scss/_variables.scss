@@ -2,9 +2,11 @@
 
 /* Colors */
 $white: #ffffff;
+$shark: #25272C;
 $gallery: #eaeaea;
 $dove-gray: #666666;
 $porcelain: #F9FBFB;
+$spun-pearl: #B1AEB7;
 $keppel: #40B3A2;
 $persian-green: #01989D;
 $eastern-blue: #19869a;
@@ -15,6 +17,21 @@ $medium-purple: #7a6fde;
 $sirocco: #6D7778;
 $crimson: #CE1253;
 $valencia: #DF494A;
+$steel-blue: #4a9ab5;
+$pelorous: #36A4C9;
+
+
+/* Dropdown */
+/* Entertainment */
+$tapestry: #AD5C92;
+/* Alley */
+$driftwood: #AE8247;
+/* Park - garden */
+$hippie-green: #588B50;
+/* Historical */
+$faded-jade: #3E7975;
+/* Sea View */
+$horizon: #5E82A6;
 
 @mixin flex-box($direction, $justify, $align) {
   display: flex;

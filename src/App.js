@@ -17,6 +17,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import ChangePassword from "./components/auth/ChangePassword";
 import Landing from "./components/layout/Landing";
+import ReactNoSleep from 'react-no-sleep';
 import {useSelector} from "react-redux";
 
 export const AppContext = React.createContext();
@@ -26,7 +27,7 @@ function reducer(state, action) {
     recording: {$set: action.recording},
     gpsLocate: {$set: action.gpsLocate},
     objectiveSelection: {$set: action.objectiveSelection},
-    subjectiveSelection: {$set: action.objectiveSelection},
+    subjectiveSelection: {$set: action.subjectiveSelection},
     bottomExpanded: {$set: action.bottomExpanded}
   });
 }
@@ -77,28 +78,37 @@ const AppComponent = (props) =>  {
 
   return (
     <div className="App">
-      <AppContext.Provider value={{ state, dispatch }}>
-        <Header/>
-        <main>
-          <section>
-            {!location.pathname.match(/home/) &&
-            !location.pathname.match(/register/) &&
-            !location.pathname.match(/login/) &&
-            !location.pathname.match(/change\/password/) ?
-            <CustomMap />:null}
-            <Switch>
-              <Route exact path="/home" component={withRouter(Landing)} />
-              <Route exact path="/register" component={withRouter(Register)} />
-              <Route exact path="/login" component={withRouter(Login)} />
-              <PrivateRoute exact path="/change/password" component={ChangePassword} />
-              <PrivateRoute  authed={auth.isAuthenticated} exact path='/location' component={LocateAndRecord} />}/>
-              <PrivateRoute  authed={auth.isAuthenticated} exact path='/draw' component={DrawPath} />}/>
-              <Route path="/" render={()=> <Redirect to="/home"/>}/>
-            </Switch>
-            <BottomBar/>
-          </section>
-        </main>
-      </AppContext.Provider>
+      <ReactNoSleep>
+        {({ isOn = state.recording, enable, disable }) => (
+          <AppContext.Provider value={{ state, dispatch }}>
+            <Header/>
+            <main>
+              <section>
+                {!location.pathname.match(/home/) &&
+                !location.pathname.match(/register/) &&
+                !location.pathname.match(/login/) &&
+                !location.pathname.match(/change\/password/) ?
+                <CustomMap
+                  recording = {state.recording}
+                  gpsLocate = {state.gpsLocate}
+                  objectiveSelection = {state.objectiveSelection}
+                  subjectiveSelection = {state.subjectiveSelection}
+                />:null}
+                <Switch>
+                  <Route exact path="/home" component={withRouter(Landing)} />
+                  <Route exact path="/register" component={withRouter(Register)} />
+                  <Route exact path="/login" component={withRouter(Login)} />
+                  <PrivateRoute exact path="/change/password" component={ChangePassword} />
+                  <PrivateRoute  authed={auth.isAuthenticated} exact path='/location' component={LocateAndRecord} />}/>
+                  <PrivateRoute  authed={auth.isAuthenticated} exact path='/draw' component={DrawPath} />}/>
+                  <Route path="/" render={()=> <Redirect to="/home"/>}/>
+                </Switch>
+                <BottomBar/>
+              </section>
+            </main>
+          </AppContext.Provider>
+        )}
+      </ReactNoSleep>
     </div>
   );
 }

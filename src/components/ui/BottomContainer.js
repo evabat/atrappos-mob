@@ -1,6 +1,4 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAngleUp} from "@fortawesome/free-solid-svg-icons";
 import {LocateAndRecordContent} from "../content/LocateAndRecordContent";
 import {DrawPathContent} from "../content/DrawPathContent";
 import {withRouter} from "react-router-dom";
