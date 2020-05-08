@@ -6,14 +6,14 @@ export const RadioSelectionGroup = (props) => {
     const {prop} = props;
     return (
        <div className="select-sub-obj">
-           <div className="path-actions" key={"subjective-types"}>
+           <div className={"path-actions path-actions--subjective"} key={"subjective-types"}>
                <label className="path-actions--label">Select path category</label>
                <span className="path-actions--caption">(Defined by path's color)</span>
            </div>
            <RadioSelection list={subjectiveTypes}
                               type={'subjective'}
            />
-           <div className="path-actions" key={"objective-types"}>
+           <div className={"path-actions path-actions--objective"}  key={"objective-types"}>
                <label className="path-actions--label">Select path difficulty level</label>
                <span className="path-actions--caption">(Defined by path's width)</span>
            </div>

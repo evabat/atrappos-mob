@@ -1,0 +1,17 @@
+.path-actions {
+  @include flex-box(column, flex-start, flex-start);
+  margin-top: 20px;
+  color: $shark;
+  &--subjective {
+    margin-top: 10px;
+  }
+  &--objective {
+    margin-top: 30px;
+  }
+  &--label {
+    @include font-mixin(500, 14px, 0.8);
+  }
+  &--caption {
+    @include font-mixin(400, 12px, 0.8);
+  }
+}

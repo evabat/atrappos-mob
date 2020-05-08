@@ -1,0 +1,33 @@
+.modal-backdrop {
+  background-color: $java !important;
+}
+
+.evaluation-dialog {
+  width: calc(100vw - 30px);
+  margin: -40vh 15px 15px auto;
+  top: 50%;
+  .modal-header {
+    padding: 15px !important;
+    //@include box-shadow(1px 1px 20px 1px, rgba(109, 108, 108, 0.5));
+    @include box-shadow(1px 1px 12px 1px, rgba(101, 45, 193, 0.5));
+  }
+  .modal-title {
+    font-weight: 600 !important;
+    color: $purple-heart;
+  }
+  .modal-footer {
+    padding: 15px !important;
+    //@include box-shadow(1px 1px 20px 1px, rgba(109, 108, 108, 0.5));
+    @include box-shadow(1px 1px 12px 1px, rgba(101, 45, 193, 0.5));
+  }
+  .modal-content {
+    height: 80vh;
+    overflow: hidden;
+    width: calc(100vw - 30px);
+  }
+  .modal-body {
+    overflow-y: auto;
+    height: 100%;
+    padding: 15px !important;
+  }
+}

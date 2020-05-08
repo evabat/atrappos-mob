@@ -19,6 +19,7 @@ import ChangePassword from "./components/auth/ChangePassword";
 import Landing from "./components/layout/Landing";
 import ReactNoSleep from 'react-no-sleep';
 import {useSelector} from "react-redux";
+import {EvaluationModal} from "./components/ui/EvaluationModal";
 
 export const AppContext = React.createContext();
 
@@ -28,16 +29,20 @@ function reducer(state, action) {
     gpsLocate: {$set: action.gpsLocate},
     objectiveSelection: {$set: action.objectiveSelection},
     subjectiveSelection: {$set: action.subjectiveSelection},
-    bottomExpanded: {$set: action.bottomExpanded}
+    bottomExpanded: {$set: action.bottomExpanded},
+    showEvaluationModal: {$set: action.showEvaluationModal},
+    pathEvaluated: {$set: action.pathEvaluated}
   });
 }
 
 const initialState = {
   recording: false,
   gpsLocate: false,
-  objectiveSelection: defaultObjectiveValue,
-  subjectiveSelection: defaultSubjectiveValue,
-  bottomExpanded: true
+  objectiveSelection: null,
+  subjectiveSelection: null,
+  bottomExpanded: true,
+  showEvaluationModal: false,
+  pathEvaluated: false
 };
 
 // Check for token to keep user logged in
@@ -104,6 +109,7 @@ const AppComponent = (props) =>  {
                   <Route path="/" render={()=> <Redirect to="/home"/>}/>
                 </Switch>
                 <BottomBar/>
+                <EvaluationModal />
               </section>
             </main>
           </AppContext.Provider>

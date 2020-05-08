@@ -33,7 +33,7 @@ const BottomContainerComponent = (props) => {
     }
 
     return (
-        <div className={"bottom-container" + (expanded ? " expanded": "")}>
+        <div className={"bottom-container" + (expanded ? " expanded": "") + (" " + location.pathname.replace("/", ""))}>
             <div className="bottom-container__content">
                 {renderSwitch(content)}
             </div>

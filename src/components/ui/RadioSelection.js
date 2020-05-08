@@ -8,7 +8,6 @@ export default (props) => {
     const {state, dispatch} = useContext(AppContext)
 
     const onChange = (e, type) => {
-        console.log(e.target);
         if (type === "objective") {
             dispatch({...state, objectiveSelection: e.target.value})
         }
@@ -18,17 +17,11 @@ export default (props) => {
     }
 
     useEffect(()=> {
-        let result = list.filter(obj => {
-            return obj.value === state.objectiveSelection
-        });
-        setObjSelectedValue(result[0])
+        setObjSelectedValue(state.objectiveSelection)
     }, [state.objectiveSelection]);
 
     useEffect(()=> {
-        let result = list.filter(obj => {
-            return obj.value === state.subjectiveSelection
-        });
-        setSubjSelectedValue(result[0])
+        setSubjSelectedValue(state.subjectiveSelection)
     }, [state.subjectiveSelection]);
 
     return (
@@ -37,9 +30,10 @@ export default (props) => {
                 {list.map((el) => {
                     return <div className="input-container" key={el.className + "-key"}>
                         <input id={type + "-" + el.className}
+                               checked={el.value === (type === 'objective' ? state.objectiveSelection : state.subjectiveSelection)}
                                onChange={(e)=> onChange(e, type)}
                                className="radio-button"
-                               type="radio" name="radio"
+                               type="radio" name={"radio-" + type}
                                value={el.value}
                         />
                         <div className="radio-tile">

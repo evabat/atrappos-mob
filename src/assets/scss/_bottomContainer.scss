@@ -11,19 +11,23 @@
   @include box-shadow(0 -5px 5px -5px, $dove-gray);
   @include transition-mixin(max-height, 0.5s, Cubic-bezier(0, 1, 0, 1));
   &.expanded {
-    max-height: 65vh;
+    &.location {
+      max-height: 40vh;
+    }
     padding-bottom: 2rem;
     @include transition-mixin(max-height, 0.5s, ease-in-out);
   }
   &__content {
-    padding: 30px 15px 2rem 15px;
+    padding: 40px 15px 2rem 15px;
     overflow-y: auto;
     height: 100%;
     h5 {
       padding: 8px 0 8px 0;
       text-align: center;
+      color: $persian-green;
+      font-weight: 500;
       @include box-shadow(1px 1px 20px 1px, $dove-gray);
-      width: calc(100% + 30px);
+      width: calc(100%);
       margin-left: -15px;
       position: absolute;
       background-color: $porcelain;

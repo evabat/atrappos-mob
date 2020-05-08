@@ -13,6 +13,6 @@ export const subjectiveTypes = [
     {label: 'Seaview', value: '#5E82A6', className:'lvl-5'},
 ];
 
-export const defaultSubjectiveValue = '#AD5C92';
+export const defaultSubjectiveValue = '#1B1404';
 
-export const defaultObjectiveValue = '2';
+export const defaultObjectiveValue = '1';

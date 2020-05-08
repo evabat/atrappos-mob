@@ -246,6 +246,9 @@ header {
   display: block;
   filter: invert(27%) sepia(51%) saturate(200%) hue-rotate(40deg) brightness(180%) contrast(60%); }
 
+.leaflet-control-zoom {
+  margin-top: 25px !important; }
+
 .record__btn {
   margin: 10px auto;
   display: block;
@@ -370,34 +373,32 @@ header {
   -o-transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1);
   transition: max-height 0.5s Cubic-bezier(0, 1, 0, 1); }
   .bottom-container.expanded {
-    max-height: 65vh;
     padding-bottom: 2rem;
     -webkit-transition: max-height 0.5s ease-in-out;
     -moz-transition: max-height 0.5s ease-in-out;
     -o-transition: max-height 0.5s ease-in-out;
     transition: max-height 0.5s ease-in-out; }
+    .bottom-container.expanded.location {
+      max-height: 40vh; }
   .bottom-container__content {
-    padding: 30px 15px 2rem 15px;
+    padding: 40px 15px 2rem 15px;
     overflow-y: auto;
     height: 100%; }
     .bottom-container__content h5 {
       padding: 8px 0 8px 0;
       text-align: center;
+      color: #01989D;
+      font-weight: 500;
       -moz-box-shadow: 1px 1px 20px 1px #666666;
       -webkit-box-shadow: 1px 1px 20px 1px #666666;
       -o-box-shadow: 1px 1px 20px 1px #666666;
       box-shadow: 1px 1px 20px 1px #666666;
-      width: calc(100% + 30px);
+      width: calc(100%);
       margin-left: -15px;
       position: absolute;
       background-color: #F9FBFB;
       top: 0;
       z-index: 1010; }
-
-.bottom__content h5 {
-  text-align: center;
-  color: #01989D;
-  font-weight: 500; }
 
 .card {
   overflow: visible; }
@@ -424,6 +425,53 @@ header {
   .card.evaluation__card .card-header {
     background-color: #4a9ab5;
     border: 1px solid #4a9ab5; }
+
+.modal-backdrop {
+  background-color: #20adc5 !important; }
+
+.evaluation-dialog {
+  width: calc(100vw - 30px);
+  margin: -40vh 15px 15px auto;
+  top: 50%; }
+  .evaluation-dialog .modal-header {
+    padding: 15px !important;
+    -moz-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    -webkit-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    -o-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5); }
+  .evaluation-dialog .modal-title {
+    font-weight: 600 !important;
+    color: #5244D5; }
+  .evaluation-dialog .modal-footer {
+    padding: 15px !important;
+    -moz-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    -webkit-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    -o-box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5);
+    box-shadow: 1px 1px 12px 1px rgba(101, 45, 193, 0.5); }
+  .evaluation-dialog .modal-content {
+    height: 80vh;
+    overflow: hidden;
+    width: calc(100vw - 30px); }
+  .evaluation-dialog .modal-body {
+    overflow-y: auto;
+    height: 100%;
+    padding: 15px !important; }
+
+.path-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 20px;
+  color: #25272C; }
+  .path-actions--subjective {
+    margin-top: 10px; }
+  .path-actions--objective {
+    margin-top: 30px; }
+  .path-actions--label {
+    font: normal normal 500 14px/0.8 "Montserrat", sans-seriff; }
+  .path-actions--caption {
+    font: normal normal 400 12px/0.8 "Montserrat", sans-seriff; }
 
 .radio-container.subjective {
   display: flex;

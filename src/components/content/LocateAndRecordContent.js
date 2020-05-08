@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {mapEvent} from "../../lib/utils";
 import {AddEditPath} from "./AddEditPath";
 import {EvaluationAccordion} from "../ui/EvaluationAccordion";
+import {EvaluationModalBtn} from "../ui/EvaluationModalBtn";
 
 export const LocateAndRecordContent = (props) => {
     const {prop} = props;
@@ -37,7 +38,7 @@ export const LocateAndRecordContent = (props) => {
                             dispatch({ ...state, recording: !state.recording});
                             DisableGpsBtn(!state.recording);
                         } else {
-                            alert('You must activate GPS to record a path :)')
+                            alert('To record a path, GPS must be activated :)')
                         }
                     }}>
                 <i>
@@ -46,8 +47,7 @@ export const LocateAndRecordContent = (props) => {
                 <span>{!state.recording ? "Start " : "Stop "} recording</span>
             </button>
             {state.recording ?
-
-                <EvaluationAccordion />:null
+                <EvaluationModalBtn />:null
             }
         </div>
     );

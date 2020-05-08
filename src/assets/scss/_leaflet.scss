@@ -36,3 +36,7 @@
   filter: invert(27%) sepia(51%) saturate(200%) hue-rotate(40deg) brightness(180%) contrast(60%);
 }
 
+.leaflet-control-zoom {
+  margin-top: 25px !important;
+}
+
