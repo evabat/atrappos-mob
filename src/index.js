@@ -11,7 +11,7 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
     <Provider store={store}>
-        <Router basename='/atrappos-mob/'>
+        <Router basename='/Atrappos/'>
             <App />
         </Router>
     </Provider>

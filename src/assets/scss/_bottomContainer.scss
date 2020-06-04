@@ -9,16 +9,37 @@
   overflow: hidden;
   height: 100%;
   @include box-shadow(0 -5px 5px -5px, $dove-gray);
-  @include transition-mixin(max-height, 0.5s, Cubic-bezier(0, 1, 0, 1));
+  @include transition-mixin(max-height, 0.35s, ease-in-out);
   &.expanded {
     &.location {
-      max-height: 40vh;
+      max-height: 165px;
+      &.recording {
+        max-height: 220px !important;
+      }
+      &.recorded-path {
+        max-height: 325px !important;
+      }
+    }
+    &.draw {
+      max-height: 220px;
+    }
+    &.drawn-path {
+      max-height: 325px;
+    }
+    &.pathlist {
+      max-height: 170px;
+      &.selected-path {
+        max-height: 270px !important;
+      }
+    }
+    &.community {
+      max-height: 170px;
     }
     padding-bottom: 2rem;
-    @include transition-mixin(max-height, 0.5s, ease-in-out);
+    @include transition-mixin(max-height, 0.35s, ease-in-out);
   }
   &__content {
-    padding: 40px 15px 2rem 15px;
+    padding: 45px 15px 2rem 15px;
     overflow-y: auto;
     height: 100%;
     h5 {
@@ -35,4 +56,14 @@
       z-index: 1010;
     }
   }
+}
+
+.disable-draw__notification {
+  color: $crimson;
+  position: absolute;
+  @include font-mixin(600, 11px, 1.2);
+  margin-top: -18px;
+  margin-left: -15px;
+  text-align: center;
+  width: 100%;
 }

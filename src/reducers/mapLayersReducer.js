@@ -1,6 +1,6 @@
 
 const initialState = {
-    mapLayer: "osmMapnik"
+    mapLayer: "osmMapnik",
 };
 
 export default function(state = initialState, action) {

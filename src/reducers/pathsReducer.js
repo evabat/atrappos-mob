@@ -1,45 +1,91 @@
 
 const initialState = {
-    emptyPath: true,
-    emptyName: false,
-    disableSave: true,
-    disableDraw: false,
-    allPaths: [],
-    mapLayer: "osmMapnik"
+    allPaths: {
+        fetching: false,
+        fetched: false,
+        payload: null
+    },
+    snappedPath: {
+        fetching: false,
+        fetched: false,
+        payload: null
+    }
 };
 
 export default function(state = initialState, action) {
     switch (action.type) {
-        case 'EMPTY_PATH':
+        case 'GET_ALL_PATHS_PENDING':
             return {
                 ...state,
-                emptyPath: action.emptyPath
+                allPaths: {
+                    fetching: true,
+                    fetched: false
+                }
             };
-        case 'EMPTY_NAME':
+        case 'GET_ALL_PATHS_REJECTED':
             return {
                 ...state,
-                emptyName: action.emptyName
+                allPaths: {
+                    fetching: false,
+                    fetched: false
+                }
             };
-        case 'ALL_PATHS':
+        case 'GET_ALL_PATHS_FULFILLED':
             return {
                 ...state,
-                allPaths: action.allPaths
+                allPaths: {
+                    fetching: false,
+                    fetched: true
+                }
             };
-        case 'SET_MAP_LAYER':
+        case 'persist/REHYDRATE':
             return {
                 ...state,
-                mapLayer: action.mapLayer
+                allPaths: {
+                    fetching: false,
+                    fetched: true
+                }
             };
-        case 'DISABLE_SAVE':
+        case 'SNAP_PATH_PENDING':
             return {
                 ...state,
-                disableSave: action.disableSave
+                snappedPath: {
+                    fetching: true,
+                    fetched: false
+                }
             };
-        case 'DISABLE_DRAW' :
+        case 'SNAP_PATH_REJECTED':
             return {
                 ...state,
-                disableDraw: action.disableDraw
+                snappedPath: {
+                    fetching: false,
+                    fetched: false,
+                    payload: action.payload
+                }
             };
+        case 'SNAP_PATH_FULFILLED':
+            return {
+                ...state,
+                snappedPath: {
+                    fetching: false,
+                    fetched: true
+                }
+            };
+        case "POST_PATH":
+            return (state = {
+                ...state,
+                newPath: action.payload
+            });
+        case "PUT_PATH":
+            return (state = {
+                ...state,
+                editedPath: action.payload
+            });
+        case "DELETE_PATH":
+            return (state = {
+                ...state,
+                deletedPath: action.payload
+            });
         default:
             return state;
     }

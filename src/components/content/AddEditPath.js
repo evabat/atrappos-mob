@@ -2,8 +2,7 @@ import React from 'react';
 
 import {RadioSelectionGroup} from "./RadioSelectionGroup";
 
-export const AddEditPath = (props) => {
-    const {prop} = props;
+export const AddEditPath = () => {
     return (
        <div className="add-edit-path">
             <RadioSelectionGroup />

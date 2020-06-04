@@ -8,7 +8,7 @@
   &__part {
     @include flex-box(row, space-between, center);
     width: 50%;
-    background-color: $keppel;
+    background-color: $java;
     height: 100%;
     &--left {
       border-top-right-radius: 80px;
@@ -41,17 +41,17 @@
       @include flex-box(column, flex-end, center);
       i {
         font-size: 16px;
-        color: $porcelain;
+        color: $white;
         opacity: 0.6;
         margin-bottom: -3px;
       }
       span {
-        color: $porcelain;
+        color: $white;
         letter-spacing: 1px;
-        opacity: 0.6;
+        opacity: 0.7;
         text-align: center;
         white-space: nowrap;
-        @include font-mixin(500, 9px, 1.6);
+        @include font-mixin(400, 9px, 1.6);
       }
       &.--active {
         i {
@@ -63,29 +63,34 @@
           opacity: 1;
         }
       }
+      &.disabled {
+        i, span {
+          color: $gray-suit !important;
+        }
+      }
     }
   }
   .toggle-expand {
     width: 34px;
     height: 34px;
-    background-color: $porcelain;
+    background-color: $white;
     padding: 5px;
     border-radius: 50%;
     position: absolute;
     left: calc(50% - 17px);
     cursor: pointer;
-    border: 2px solid $keppel;
+    border: 2px solid $java;
     @include flex-box(column, center, center);
     bottom: 5px;
     i {
-      color: $keppel;
+      color: $java;
       font-size: 25px;
       line-height: 30px;
       @include transition-mixin(transform, 0.2s, linear);
-      &.angle-down {
+      &.minus {
         transform: rotate(180deg);
       }
-      .angle-up {
+      .plus {
         transform: rotate(-180deg);
       }
     }

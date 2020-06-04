@@ -4,24 +4,48 @@ import { connect } from "react-redux";
 import { Logo } from "./Logo";
 import { logoutUser } from "../../services/authService";
 import PropTypes from "prop-types";
+import {ChangePwToast} from "../ui/ChangePwToast";
+import {toastDelay} from "../../lib/constants";
 
 class Landing extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      toast: {
+        show: false,
+        type: null,
+        msg: ''
+      }
+    }
+    this.showMsgToast = this.showMsgToast.bind(this);
+  }
 
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
   };
 
+
+  showMsgToast(show, type, msg) {
+    this.setState({
+      toast: {
+        show: show,
+        type: type,
+        msg: msg
+      }
+    })
+  }
+
   componentDidMount() {
-    // If logged in and user navigates to Login page, should redirect them to map
-    if (this.props.auth.isAuthenticated) {
-    }
     if (this.props.location && this.props.location.state && this.props.location.state.from === "resetPw") {
-      alert('password changed successfully!')
+      this.showMsgToast(true, 'success', 'The password has changed successfully!');
+      setTimeout(() => {
+        this.props.history.push('/home');
+      }, toastDelay);
     }
   }
   render() {
-    const { user} = this.props.auth;
 
     return (
       <div className="container landing">
@@ -30,11 +54,17 @@ class Landing extends Component {
             <Logo place="landing"/>
               {this.props.auth.isAuthenticated ?
                   <React.Fragment>
+                    <div className="col-md-12  landing--col">
+                      <div className="welcome-user">
+                        {"Hello, " + this.props.auth.user.name + "!"}<br/>
+                        Welcome to Atr<b>app</b>os Mobile, a simple crowdsourced map making app!
+                      </div>
+                    </div>
                     <div className="col-md-6  landing--col">
                       <Link
                           to="/location"
                           className="btn auth--btn">
-                          Enter App
+                          Walk in!
                       </Link>
                     </div>
                     <div className="col-md-6 col-lg-6 landing--col">
@@ -68,6 +98,7 @@ class Landing extends Component {
               </React.Fragment>}
           </div>
         </div>
+        <ChangePwToast showMsgToast={this.showMsgToast} toastObj={this.state.toast} />
       </div>
     );
   }

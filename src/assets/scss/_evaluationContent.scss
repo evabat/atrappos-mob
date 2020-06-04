@@ -1,17 +1,51 @@
 .path-actions {
   @include flex-box(column, flex-start, flex-start);
-  margin-top: 20px;
   color: $shark;
+  max-width: $eval-modal-widths;
+  margin-left: auto;
+  margin-right: auto;
   &--subjective {
-    margin-top: 10px;
+    margin-top: 25px;
   }
   &--objective {
-    margin-top: 30px;
+    margin-top: 10px;
   }
   &--label {
-    @include font-mixin(500, 14px, 0.8);
+    @include font-mixin(500, 14px, 17px);
+    margin-bottom: 1px !important;
   }
   &--caption {
-    @include font-mixin(400, 12px, 0.8);
+    @include font-mixin(400, 12px, 16px);
+  }
+}
+
+.path-input {
+  @include flex-box(column, flex-start, flex-start);
+  width: $eval-modal-widths;
+  &__wrapper {
+    @include flex-box(row, center, center);
+    margin-top: 25px;
+  }
+  input[type="text"] {
+    font-size: 12px;
+    border-radius: 5px;
+    border: 1px solid $spun-pearl;
+    padding: 7px 7px 4px 7px;
+    outline: none !important;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+}
+
+.path-description {
+  &__wrapper {
+    @include flex-box(row, flex-start, center);
+
+    label {
+      margin: 0 0 0 5px !important;
+    }
+  }
+  &-tltp__btn--tltp {
+    color: $purple-heart;
   }
 }

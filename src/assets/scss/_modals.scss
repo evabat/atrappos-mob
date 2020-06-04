@@ -2,32 +2,219 @@
   background-color: $java !important;
 }
 
-.evaluation-dialog {
+.modal-header {
+  padding: 15px !important;
+}
+
+.modal-title {
+  font-weight: 600 !important;
+  line-height: 1.1;
+}
+
+.evaluation-dialog,
+.path-list-dialog,
+.community-path-list-dialog,
+.map-selection-dialog,
+.faq-dialog {
   width: calc(100vw - 30px);
-  margin: -40vh 15px 15px auto;
+  margin: -40vh auto 15px auto;
   top: 50%;
-  .modal-header {
-    padding: 15px !important;
-    //@include box-shadow(1px 1px 20px 1px, rgba(109, 108, 108, 0.5));
-    @include box-shadow(1px 1px 12px 1px, rgba(101, 45, 193, 0.5));
-  }
-  .modal-title {
-    font-weight: 600 !important;
-    color: $purple-heart;
-  }
-  .modal-footer {
-    padding: 15px !important;
-    //@include box-shadow(1px 1px 20px 1px, rgba(109, 108, 108, 0.5));
-    @include box-shadow(1px 1px 12px 1px, rgba(101, 45, 193, 0.5));
-  }
+  max-width: initial !important;
   .modal-content {
     height: 80vh;
-    overflow: hidden;
     width: calc(100vw - 30px);
+    overflow: hidden;
   }
   .modal-body {
     overflow-y: auto;
     height: 100%;
+    padding: 0 15px 20px 15px !important;
+  }
+}
+
+.evaluation-dialog {
+  .modal-header {
+    @include box-shadow(1px 1px 8px 1px, rgba(101, 45, 193, 0.5));
+  }
+  .modal-title {
+    color: $purple-heart;
+  }
+  .modal-footer {
     padding: 15px !important;
+    @include box-shadow(1px 1px 8px 1px, rgba(101, 45, 193, 0.5));
+  }
+}
+
+.path-list-dialog {
+  .modal-header {
+    @include box-shadow(1px 1px 8px 1px, rgba(152, 67, 101, 0.5));
+  }
+  .modal-title {
+    color: $vin-rouge;
+  }
+  .modal-footer {
+    padding: 15px !important;
+    @include box-shadow(1px 1px 8px 1px, rgba(152, 67, 101, 0.5));
+  }
+}
+
+.community-path-list-dialog {
+  .modal-header {
+    @include box-shadow(1px 1px 8px 1px, rgba(75, 147, 180, 0.5));
+  }
+  .modal-title {
+    color: $steel-blue;
+  }
+  .modal-footer {
+    padding: 15px !important;
+    @include box-shadow(1px 1px 8px 1px, rgba(75, 147, 180, 0.5));
+  }
+}
+
+.map-selection-dialog,
+.faq-dialog {
+  .modal-header {
+    @include box-shadow(1px 1px 8px 1px, rgba(32, 173, 197, 0.5));
+  }
+  .modal-title {
+    color: $java;
+  }
+  .modal-footer {
+    padding: 15px !important;
+    @include box-shadow(1px 1px 8px 1px, rgba(32, 173, 197, 0.5));
+  }
+}
+
+
+.warning-backdrop {
+  background-color: $java !important;
+}
+
+.warning-modal {
+  margin-top: 10vh !important;
+
+  .modal-title {
+    &.delete {
+      color: $red-orange;
+    }
+    &.discard {
+      color: $golden-grass;
+    }
+  }
+
+  .btn {
+    padding: 3px 6px;
+    border-radius: 0.25rem;
+    min-width: 120px;
+
+    &:nth-child(2) {
+      margin-left: 20px;
+    }
+
+    &-light,
+    &-warning {
+      border: 1px solid $shark;
+
+      &:hover,
+      &:active,
+      &:active:focus,
+      &:focus {
+        border: 1px solid $shark !important;
+      }
+    }
+
+    span {
+      &:nth-child(2) {
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+/* TOASTS */
+
+.notification-toast {
+  max-width: initial !important;
+  &__wrapper {
+    position: absolute !important;
+    top: 35px;
+    z-index: 1002;
+    left: 10px;
+    width: calc(100% - 20px);
+  }
+  &.error {
+    background-color: $bizarre;
+    .toast-header button {
+      color: $stiletto;
+    }
+    .toast-body {
+      span {
+        color: $stiletto;
+      }
+    }
+  }
+  &.warning {
+    background-color: $cape-honey;
+    .toast-header button {
+      color: $raw-amber;
+    }
+    .toast-body {
+      span {
+        color: $raw-amber;
+      }
+    }
+  }
+  &.info {
+    background-color: $jugged-ice;
+    .toast-header button {
+      color: $paradiso;
+    }
+    .toast-body {
+      span {
+        color: $paradiso;
+      }
+    }
+  }
+  &.success {
+    background-color: $iceberg;
+    .toast-header button {
+      color: $sea-green;
+    }
+    .toast-body {
+      span {
+        color: $sea-green;
+      }
+    }
+  }
+  .toast-header {
+    padding: 0 !important;
+    @include flex-box(row, flex-end, center);
+    button {
+      z-index: 1020;
+      position: absolute;
+      top: 2px;
+      right: 8px;
+      font-size: 32px;
+    }
+  }
+  .toast-body {
+    @include inline-flex-box(row, flex-start, flex-start);
+    padding: 10px 25px 15px 15px;
+    height: auto;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    span {
+      &:first-child {
+        font-size: 26px;
+      }
+      &:nth-child(2) {
+        @include font-mixin(400, 15px, 1.2);
+        font-weight: 500;
+        margin: 10px 0 0 10px;
+      }
+    }
   }
 }

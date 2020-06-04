@@ -5,25 +5,36 @@ import 'leaflet-draw';
 import {CachedTileLayer} from '@yaga/leaflet-cached-tile-layer';
 import PropTypes from "prop-types";
 import { EditControl } from "react-leaflet-draw";
-import {AppContext} from "../../App";
 import {
     AttributionControl,
     Map,
     TileLayer,
     FeatureGroup,
-    GeoJSON, Polyline
+    GeoJSON, Polyline, Marker, Popup
 } from "react-leaflet";
+import Geocoder from 'leaflet-control-geocoder';
+// eslint-disable-next-line
 import { GestureHandling } from "leaflet-gesture-handling";
+import {loginUser, updateUser} from "../../services/authService";
+import moment from "moment";
+import {
+    defaultObjectiveValue,
+    defaultSubjectiveValue,
+    mapLayers, subjectiveTypesKeyValue
+} from "../../lib/constants";
 import LocateControl from './LocateControl.js';
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
-import {loginUser, updateUser} from "../../services/authService";
-import {defaultObjectiveValue, defaultSubjectiveValue} from "../../lib/constants";
+import {getRandomInt, sendGaEvent} from "../../lib/utils";
+import {PathInfoTooltip} from "../ui/PathInfoTooltip";
 
 
-const southWest = L.latLng( 37.273073, 23.033121),
-    northEast = L.latLng(38.325771, 24.134307),
+// const southWest = L.latLng( 37.273073, 23.033121),
+//     northEast = L.latLng(38.325771, 24.134307),
+//     bounds = L.latLngBounds(southWest, northEast);
+const southWest = L.latLng( 34.582754, 19.072326),
+    northEast = L.latLng(41.948798, 29.382288),
     bounds = L.latLngBounds(southWest, northEast);
 
 const locateOptions = {
@@ -42,6 +53,7 @@ const locateOptions = {
     }
 };
 
+delete L.Icon.Default.prototype._getIconUrl;
 
 class CustomMap extends Component {
     constructor(props) {
@@ -55,7 +67,19 @@ class CustomMap extends Component {
             recording: props.recording,
             locationPolyCoords: [],
             objective: props.objectiveSelection,
-            subjective: props.subjectiveSelection
+            subjective: props.subjectiveSelection,
+            editStart: null,
+            editStop: null,
+            pathDescr: null,
+            hasDrawnPath: false,
+            hasRecordedPath: false,
+            hasSelectedPath: false,
+            polyKey: getRandomInt(9999),
+            selectedUserPaths: [],
+            selectedCommunityPaths: [],
+            locationName: 'Unknown area',
+            distance: null,
+            tileLayer: this.props.mapLayers.mapLayer,
         }
 
 
@@ -68,6 +92,8 @@ class CustomMap extends Component {
         this._onEditStop = this._onEditStop.bind(this);
         this._onEdited = this._onEdited.bind(this);
         this.generateGeoJSON = this.generateGeoJSON.bind(this);
+        this.getLocationName = this.getLocationName.bind(this);
+        this.getPathDistance = this.getPathDistance.bind(this);
     }
 
 
@@ -82,8 +108,9 @@ class CustomMap extends Component {
     componentDidMount() {
         const map = this.mapRef.current.leafletElement;
         let _this = this;
-        const leafletCachedTileLayer = new CachedTileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        const leafletCachedTileLayer = new CachedTileLayer(mapLayers[this.state.tileLayer].layer, {
             // attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: mapLayers[this.state.tileLayer].maxZoom,
             databaseName: 'tile-cache-data', // optional
             databaseVersion: 1, // optional
             objectStoreName: 'OSM', // optional
@@ -97,28 +124,42 @@ class CustomMap extends Component {
         map.on('locationfound', function(loc) {
             if (_this.state.recording) {
                 _this.setState(prevState => {
-                    console.log('prev POLY on location found', prevState.locationPolyCoords)
                     return {
                         locationPolyCoords: prevState.locationPolyCoords.length <= 0 ? [[loc.latitude, loc.longitude]] : [...prevState.locationPolyCoords, [loc.latitude, loc.longitude]]
+                    // locationPolyCoords: [
+                    //         [37.965347, 23.701544 ],
+                    //         [37.965837, 23.703218 ],
+                    //         [37.963553, 23.701952 ],
+                    //         [37.962775, 23.700707 ],
+                    //         [37.962775, 23.700235 ]]
                     }
                 }, () => {
-                    console.log("prev POLY on location found after set state",_this.state.locationPolyCoords)
+                    console.log("on location found", _this.state.locationPolyCoords)
                 })
             }
         });
-        //
-        // this.addDrawControl();
 
-        map.on('draw:created', function(e) {
-            var type = e.layerType,
-                layer = e.layer;
+        map.on('draw:toolbarclosed', function(e){
+           if (_this.props.drawing) {
+               _this.props.cancelDraw();
+           }
+        })
 
-            if (type === 'polyline') {
-                layer.bindPopup('A popup!');
-                console.log(layer.toGeoJSON())
+        map.on('popupopen', function(e){
+            if (e.popup &&
+                e.popup._source &&
+                e.popup._source.options) {
+                if (e.popup._source.options.className && e.popup._source.options.className === 'leaflet-control-locate-marker') {
+                    sendGaEvent({category: "open-location-info-popup", action: 'map-action'});
+                } else {
+                    if (e.popup._source.options.data &&
+                        e.popup._source.options.data.type==='Feature') {
+                        sendGaEvent({category: "open-poly-info-popup", action: 'map-action'});
+                    } else {
+                        sendGaEvent({category: "open-marker-info-popup", action: 'map-action'});
+                    }
+                }
             }
-            _this._editableFG.leafletElement.addLayer(layer);
-
         });
     }
 
@@ -130,31 +171,187 @@ class CustomMap extends Component {
                 recording: this.props.recording
             }, ()=> {
                 if (!this.state.recording) {
-                    this.generateGeoJSON()
+                    this.generateGeoJSON('recorded')
                 }
             })
         }
         if (prevProps.objectiveSelection !== this.props.objectiveSelection) {
+            if (this.state.hasDrawnPath || this.state.hasSelectedPath) {
+                let layers = this._editableFG.leafletElement.getLayers();
+                Object.keys(layers).forEach((key)=> {
+                    if (layers[key] instanceof L.Polyline) {
+                        layers[key].setStyle({weight: this.props.objectiveSelection});
+                    }
+                })
+            }
             this.setState({
-                ...this.state,
                 objective: this.props.objectiveSelection
             })
         }
         if (prevProps.subjectiveSelection !== this.props.subjectiveSelection) {
+            if (this.state.hasDrawnPath || this.state.hasSelectedPath) {
+                let layers = this._editableFG.leafletElement.getLayers();
+                Object.keys(layers).forEach((key)=> {
+                    if (layers[key] instanceof L.Polyline) {
+                        layers[key].setStyle({color: this.props.subjectiveSelection});
+                    }
+                })
+            }
+            this.setState({
+                subjective: this.props.subjectiveSelection
+            })
+        }
+
+        if (prevProps.drawnPath !== this.props.drawnPath) {
+            this.setState({
+                hasDrawnPath: this.props.drawnPath
+            })
+        }
+
+        if (prevProps.recordedPath !== this.props.recordedPath) {
+            this.setState({
+                hasRecordedPath: this.props.recordedPath
+            })
+        }
+
+        if (prevProps.selectedPath !== this.props.selectedPath) {
+            this.setState({
+                hasSelectedPath: this.props.selectedPath
+            })
+        }
+
+
+        if (prevProps.clearMap !== this.props.clearMap) {
+            if (this.props.clearMap) {
+                this.setState({
+                    locationPolyCoords: [],
+                    editStart: null,
+                    editStop: null,
+                }, ()=> {
+                    this._editableFG.leafletElement.clearLayers();
+                })
+            }
+        }
+
+        if (prevProps.pathDescr !== this.props.pathDescr) {
+            this.setState({
+                pathDescr: this.props.pathDescr
+            })
+        }
+        if (prevProps.drawing !== this.props.drawing) {
+            const map = this.mapRef.current.leafletElement;
+           if (this.props.drawing) {
+               map.gestureHandling.disable();
+               map.touchZoom.disable();
+               map.doubleClickZoom.disable();
+               map.scrollWheelZoom.disable();
+               map.boxZoom.disable();
+               map.keyboard.disable();
+               map.zoomControl.disable();
+           } else {
+               map.gestureHandling.enable();
+               map.touchZoom.enable();
+               map.doubleClickZoom.enable();
+               map.scrollWheelZoom.enable();
+               map.boxZoom.enable();
+               map.keyboard.enable();
+               map.zoomControl.enable();
+           }
+        }
+
+        if (prevProps.newPolyCoords !== this.props.newPolyCoords) {
+            if (this.props.newPolyCoords.length > 0) {
+                let coords = this.props.newPolyCoords;
+                let middleIdx= Math.round((coords.length - 1) / 2);
+                let centerCoords = coords[middleIdx];
+                let centerMap = new L.LatLng(centerCoords[0], centerCoords[1]);
+                this.setState({
+                    locationPolyCoords: this.props.newPolyCoords,
+                    polyKey: getRandomInt(99999),
+                    currCenter: centerMap
+
+                });
+            }
+        }
+
+        if (prevProps.visibleUserPaths !== this.props.visibleUserPaths) {
+            this.setState({
+                    selectedUserPaths: this.props.visibleUserPaths
+            })
+        }
+
+        if (prevProps.visibleCommunityPaths !== this.props.visibleCommunityPaths) {
+            this.setState({
+                selectedCommunityPaths: this.props.visibleCommunityPaths
+            })
+        }
+
+        if (prevProps.location !== this.props.location && this.props.location !== '/pathlist') {
+            this.setState({
+                selectedUserPaths: []
+            })
+        }
+
+        if (prevProps.location !== this.props.location && this.props.location !== '/community') {
+            this.setState({
+                selectedCommunityPaths: []
+            })
+        }
+
+        if (prevProps.centerCoords !== this.props.centerCoords && this.props.centerCoords) {
+            let centerMap = new L.LatLng(this.props.centerCoords[1], this.props.centerCoords[0]);
+            this.setState({
+                currCenter: centerMap
+            })
+        }
+
+        if (prevState.locationName !== this.state.locationName && this.state.locationName) {
+            this.props.setAreaName(this.state.locationName)
+        }
+
+        if (prevState.distance !== this.state.distance && this.state.distance) {
+            this.props.setPathDistance(this.state.distance)
+        }
+
+        if (prevProps.mapLayers.mapLayer !== this.props.mapLayers.mapLayer) {
             this.setState({
                 ...this.state,
-                subjective: this.props.subjectiveSelection
+                tileLayer: this.props.mapLayers.mapLayer
             })
         }
     }
 
-    generateGeoJSON() {
+    generateGeoJSON(type) {
         let fg = this._editableFG.leafletElement;
         if (fg._layers) {
-            Object.keys(fg._layers).map((key)=> {
-                console.log(fg._layers[key].toGeoJSON())
+            Object.keys(fg._layers).forEach((key)=> {
+                let geoJSON = fg._layers[key].toGeoJSON();
+                if (geoJSON.geometry.type === 'LineString') {
+                    let latlng = fg._layers[key]._latlngs[0];
+                    this.getLocationName(latlng, Math.round(parseInt(this.state.zoom)));
+                    this.getPathDistance(fg._layers[key]._latlngs);
+                    if (type === 'recorded') {
+                        this.props.generateRecordedPath(geoJSON);
+                    }
+                }
             })
+        } else {
+            if (type === 'recorded') {
+                this.props.generateRecordedPath(null)
+            }
         }
+    }
+
+    onZoomChange(zoom) {
+        if (zoom < 16) {
+            this.props.disableDraw(true);
+        } else {
+            this.props.disableDraw(false);
+        }
+
+        this.setState({
+            zoom: zoom
+        })
     }
 
     _editableFG = null;
@@ -162,48 +359,71 @@ class CustomMap extends Component {
     _onFeatureGroupReady (reactFGref) {
         if (reactFGref) {
             this._editableFG = reactFGref;
-            console.log('FG ready', reactFGref.leafletElement)
         }
     };
 
     _onChange = () => {
-
         // this._editableFG contains the edited geometry, which can be manipulated through the leaflet API
-
         const { onChange } = this.props;
-
         if (!this._editableFG || !onChange) {
             return;
         }
-
         const geojsonData = this._editableFG.leafletElement.toGeoJSON();
         onChange(geojsonData);
     }
 
     _onEdited = (e) => {
-
-        let numEdited = 0;
-        e.layers.eachLayer( (layer) => {
-            numEdited += 1;
-        });
-        console.log(`_onEdited: edited ${numEdited} layers`, e);
-
+        let layers = this._editableFG.leafletElement.getLayers();
+        Object.keys(layers).forEach((key)=> {
+            if (layers[key] instanceof L.Polyline) {
+                let latLng = layers[key]._latlngs[0];
+                this.getLocationName(latLng, Math.round(parseInt(this.state.zoom)));
+                this.getPathDistance(layers[key]._latlngs);
+                let newCoords = layers[key].toGeoJSON().geometry.coordinates;
+                let type;
+                switch(true) {
+                   case this.state.hasRecordedPath:
+                       type = "recordedPath";
+                       break;
+                   case this.state.hasDrawnPath:
+                       type = "drawnPath";
+                       break;
+                   case this.state.hasSelectedPath:
+                       type = "selectedPath";
+                       break;
+                   default:
+                       return null;
+                }
+                this.props.alterExistingPath(type, newCoords);
+            }
+        })
         this._onChange();
     }
 
     _onCreated = (e) => {
         let type = e.layerType;
         let layer = e.layer;
-        if (type === 'marker') {
-            // Do marker specific actions
-            console.log("_onCreated: marker created", e);
-        }
-        else {
+
+
+        if (type === 'polyline') {
+            if (this.state.pathDescr) {
+                layer.bindPopup(this.state.pathDescr);
+            }
+
+            let latLng = layer._latlngs[0];
+            this.getLocationName(latLng, Math.round(parseInt(this.state.zoom)));
+            this.getPathDistance(layer._latlngs);
+
+            this._editableFG.leafletElement.addLayer(layer);
+
+            this.props.drawnPathActions(layer.toGeoJSON());
+
+        } else {
             console.log("_onCreated: something else created:", type, e);
         }
-        // Do whatever else you need to. (save to db; etc)
 
         this._onChange();
+
     }
 
     _onDeleted = (e) => {
@@ -213,6 +433,10 @@ class CustomMap extends Component {
             numDeleted += 1;
         });
         console.log(`onDeleted: removed ${numDeleted} layers`, e);
+        let _this = this;
+        if (numDeleted > 0) {
+            _this.props.resetDrawnPath();
+        }
 
         this._onChange();
     }
@@ -222,28 +446,91 @@ class CustomMap extends Component {
     }
 
     _onEditStart = (e) => {
-        console.log('_onEditStart', e);
+        this.mapRef.current.leafletElement.gestureHandling.disable();
+        this.setState({
+            editStart: moment(new Date())
+        }, ()=> {
+            this.props.setEditStartProcedure(true);
+        });
     }
 
     _onEditStop = (e) => {
         console.log('_onEditStop', e);
+        this.mapRef.current.leafletElement.gestureHandling.enable();
+        this.setState({
+            editStop: moment(new Date())
+        }, ()=> {
+            this.props.setEditEndAndDuration(this.state.editStart, this.state.editStop);
+
+        });
     }
 
     _onDeleteStart = (e) => {
+        this.mapRef.current.leafletElement.gestureHandling.disable();
         console.log('_onDeleteStart', e);
     }
 
     _onDeleteStop = (e) => {
         console.log('_onDeleteStop', e);
+        this.mapRef.current.leafletElement.gestureHandling.enable();
+        this.props.stoppedErasing(true);
     }
+
+    async getLocationName(latLng, zoom) {
+        const geocoder = Geocoder.nominatim();
+        let promise = new Promise(function(resolve, reject) {
+            geocoder.reverse(
+                latLng,
+                zoom,
+                results => {
+                    let r = results[0];
+                    if (r) {
+                        resolve(r)
+                    }
+                }
+            );
+        });
+        await promise.then(area => {
+            let result = area && area.properties && area.properties.address ?
+                ((area.properties.address.road ?
+                    area.properties.address.road : (area.properties.address.postcode ?
+                    area.properties.address.postcode : 'Unknown road'
+                    )) + ", " + (area.properties.address.suburb ?
+                    area.properties.address.suburb :
+                    (area.properties.address.city ? area.properties.address.city: 'Unknown suburb')
+                )): 'Unknown area';
+            this.setState({
+                locationName:  result
+            })
+        })
+    }
+
+    getPathDistance(latLngs) {
+        let tempLatLng = null;
+        let totalDistance = 0.00000;
+        latLngs.forEach((latlng, idx)=> {
+            if (tempLatLng == null){
+                tempLatLng = latlng;
+                return;
+            }
+            totalDistance += tempLatLng.distanceTo(latlng);
+            tempLatLng = latlng;
+        });
+
+        this.setState({
+            distance: totalDistance
+        });
+    }
+
 
     render() {
         return (
             <Map
+                onzoomend={() => {this.onZoomChange(this.mapRef.current.leafletElement.getZoom())}}
                 ref={this.mapRef}
                 style={{height: "calc(100vh - 35px)", width: "100%"}}
                 minZoom={8}
-                maxZoom={19}
+                maxZoom={mapLayers[this.state.tileLayer].maxZoom ? mapLayers[this.state.tileLayer].maxZoom : 19}
                 gestureHandling={true}
                 center={this.state.currCenter}
                 maxBounds={bounds}
@@ -251,28 +538,24 @@ class CustomMap extends Component {
                 attributionControl={false}
             >
                 <TileLayer
-                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url='https://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                    url={mapLayers[this.state.tileLayer].layer}
                     bounds={bounds}
+                    maxZoom={mapLayers[this.state.tileLayer].maxZoom}
+                    attribution={mapLayers[this.state.tileLayer].attribution}
                 />
                 <AttributionControl position="topright" prefix={false} />
-                <LocateControl options={locateOptions} startDirectly/>
+                <LocateControl options={locateOptions} />
                 <FeatureGroup ref={ (reactFGref) => {
                     this._onFeatureGroupReady(reactFGref)}}>
                     {this.state.locationPolyCoords && this.state.locationPolyCoords.length > 0 ?
-                        <React.Fragment>
-                            <Polyline key={"polyline"}
-                                      positions={this.state.locationPolyCoords}
-                                      color={this.state.subjective ? this.state.subjective : defaultSubjectiveValue}
-                                      weight={this.state.objective ? this.state.objective : defaultObjectiveValue}
-                            />
-
-                        </React.Fragment>
-
-                        :null
+                        <Polyline key={this.state.polyKey}
+                                  positions={this.state.locationPolyCoords}
+                                  color={this.state.subjective ? this.state.subjective : defaultSubjectiveValue}
+                                  weight={this.state.objective ? this.state.objective : defaultObjectiveValue}
+                        />:null
                     }
                     <EditControl
-                        position='topright'
+                        position='topleft'
                         draw={{
                             rectangle: false,
                             polygon: false,
@@ -286,8 +569,8 @@ class CustomMap extends Component {
                                     opacity: 1
                                 }}
                         }}
+                        edit= {{
 
-                        edit={{
                         }}
                         onChange={this._onChange}
                         onCreated={this._onCreated}
@@ -300,6 +583,104 @@ class CustomMap extends Component {
                         onDeleted={this._onDeleted}
                     />
                 </FeatureGroup>
+                {this.state.selectedUserPaths.length > 0 ?
+                    this.state.selectedUserPaths.map((path)=> {
+                        return <React.Fragment key={path._id}>
+                            {path.geometry.type === "LineString" ?
+                                <React.Fragment>
+                                    <GeoJSON  key={path._id}
+                                              data={path}
+                                              style={{weight: path.properties.objective, color: path.properties.subjective}}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </GeoJSON>
+                                    <Marker
+                                        icon={subjectiveTypesKeyValue[path.properties.subjective].marker}
+                                        position={[path.geometry.coordinates[0][1], path.geometry.coordinates[0][0]]}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </Marker>
+                                    <Marker
+                                        icon={subjectiveTypesKeyValue[path.properties.subjective].marker}
+                                        position={[path.geometry.coordinates[path.geometry.coordinates.length - 1][1], path.geometry.coordinates[path.geometry.coordinates.length - 1][0]]}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </Marker>
+                                </React.Fragment>
+                                :null}
+                        </React.Fragment>
+                    })
+                    :null}
+                {this.state.selectedCommunityPaths.length > 0 ?
+                    this.state.selectedCommunityPaths.map((path)=> {
+                        return <React.Fragment key={path._id}>
+                            {path.geometry.type === "LineString" ?
+                                <React.Fragment>
+                                    <GeoJSON  key={path._id}
+                                              data={path}
+                                              style={{weight: path.properties.objective, color: path.properties.subjective}}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </GeoJSON>
+                                    <Marker
+                                        icon={subjectiveTypesKeyValue[path.properties.subjective].marker}
+                                        position={[path.geometry.coordinates[0][1], path.geometry.coordinates[0][0]]}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </Marker>
+                                    <Marker
+                                        icon={subjectiveTypesKeyValue[path.properties.subjective].marker}
+                                        position={[path.geometry.coordinates[path.geometry.coordinates.length - 1][1], path.geometry.coordinates[path.geometry.coordinates.length - 1][0]]}>
+                                        <Popup>
+                                            <PathInfoTooltip distance={path.distance}
+                                                             area={path.area}
+                                                             name={path.name}
+                                                             description={path.description}
+                                                             drawType={path.drawType}
+                                                             type='path-map'
+                                            />
+                                        </Popup>
+                                    </Marker>
+                                </React.Fragment>
+                                :null}
+                        </React.Fragment>
+                    })
+                    :null}
             </Map>
         );
     }
@@ -311,6 +692,7 @@ CustomMap.propTypes = {
 
 const mapStateToProps = state => ({
     auth: state.auth,
+    mapLayers: state.mapLayers
 });
 
 export default connect(

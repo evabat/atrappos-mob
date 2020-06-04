@@ -141,12 +141,18 @@
       "src": "icons/ms-icon-310x310.png",
       "type": "image/png",
       "sizes": "310x310"
+    },
+    {
+      "src": "icons/maskable_icon.png",
+      "sizes": "240x240",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/atrappos-mob/",
+  "start_url": "/Atrappos/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#000000",
-  "background_color": "#85CDCA"
+  "theme_color": "#40B3A2",
+  "background_color": "#ffffff"
 }

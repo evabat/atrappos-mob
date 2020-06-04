@@ -2,8 +2,7 @@ import React from 'react';
 import {BottomContainer} from "../ui/BottomContainer";
 import {withRouter} from "react-router-dom";
 
-const LocateAndRecordComponent = (props) => {
-    const {prop} = props;
+const LocateAndRecordComponent = () => {
     return (
        <BottomContainer content={"locateAndRecord"} />
     );

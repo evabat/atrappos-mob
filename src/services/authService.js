@@ -2,24 +2,32 @@ import axios from "axios";
 import setAuthToken from "../auth/setAuthToken";
 import jwt_decode from "jwt-decode";
 
-import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types"
+import { GET_ERRORS, SET_CURRENT_USER, LOGIN_LOADING, CHANGE_PW_LOADING, REGISTER_LOADING} from "./types"
 
 const prefix = process.env.NODE_ENV === 'production' && process.env.SERVER_URL ?  process.env.SERVER_URL : "";
+
 // Register User
 export const registerUser = (userData, history) => dispatch => {
+    dispatch(setRegisterLoading(true));
     axios
         .post(prefix + "/api/users/register", userData)
-        .then(res => history.push("/login"))
-        .catch(err =>
+        .then(res => {
+            history.push("/login");
+            dispatch(setRegisterLoading(false));
+        })
+        .catch(err => {
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
-            })
-        );
+            });
+            dispatch(setRegisterLoading(false));
+        });
 };
+
 
 // Login - get user token
 export const loginUser = userData => dispatch => {
+    dispatch(setLoginLoading(true));
     axios
         .post(prefix + "/api/users/login", userData)
         .then(res => {
@@ -33,24 +41,28 @@ export const loginUser = userData => dispatch => {
             const decoded = jwt_decode(token);
             // Set current user
             dispatch(setCurrentUser(decoded));
+            dispatch(setLoginLoading(false));
         })
-        .catch(err =>
+        .catch(err => {
+            dispatch(setLoginLoading(false));
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
             })
-        );
+        });
 };
 
-// Login - get user token
+// Change password
 export const changePassword = (userData, history) => dispatch => {
+    dispatch(setChangePwLoading(true));
     axios
         .post(prefix + "/api/users/reset", userData)
         .then(res => {
             history.push({
-                pathname: "/",
+                pathname: "/home",
                 state: {from: "resetPw"}
             });
+            dispatch(setChangePwLoading(false));
         })
         .catch(err =>
             {
@@ -58,7 +70,8 @@ export const changePassword = (userData, history) => dispatch => {
                 dispatch({
                     type: GET_ERRORS,
                     payload: err.response.data
-                })
+                });
+                dispatch(setChangePwLoading(false));
             }
         );
 };
@@ -71,10 +84,27 @@ export const setCurrentUser = decoded => {
     };
 };
 
-// User loading
-export const setUserLoading = () => {
+// Login loading
+export const setLoginLoading = (loading) => {
     return {
-        type: USER_LOADING
+        type: LOGIN_LOADING,
+        loginLoading: loading
+    };
+};
+
+// Register loading
+export const setRegisterLoading = (loading) => {
+    return {
+        type: REGISTER_LOADING,
+        registerLoading: loading
+    };
+};
+
+// Change pw loading
+export const setChangePwLoading = (loading) => {
+    return {
+        type: CHANGE_PW_LOADING,
+        changePwLoading: loading
     };
 };
 

@@ -2,8 +2,7 @@ import React from 'react';
 import {BottomContainer} from "../ui/BottomContainer";
 import {withRouter} from "react-router-dom";
 
-const DrawPathComponent = (props) => {
-    const {prop} = props;
+const DrawPathComponent = () => {
     return (
         <BottomContainer content={"drawPath"} />
     );

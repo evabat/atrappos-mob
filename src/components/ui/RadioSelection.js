@@ -1,18 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {AppContext} from "../../App";
 export default (props) => {
-    const { list, type } = props;
-
-    const [objSelectedValue, setObjSelectedValue] = useState(list[0]);
-    const [subjSelectedValue, setSubjSelectedValue] = useState(list[0]);
-    const {state, dispatch} = useContext(AppContext)
+    const { list, type, setValues } = props;
+    const [objSelectedValue, setObjSelectedValue] = useState(null);
+    const [subjSelectedValue, setSubjSelectedValue] = useState(null);
+    const {state} = useContext(AppContext)
 
     const onChange = (e, type) => {
+        setValues(e, type);
         if (type === "objective") {
-            dispatch({...state, objectiveSelection: e.target.value})
-        }
-        if (type === "subjective") {
-            dispatch({...state, subjectiveSelection: e.target.value})
+            setObjSelectedValue(e.target.value);
+        } else {
+            setSubjSelectedValue(e.target.value);
         }
     }
 
@@ -25,20 +24,20 @@ export default (props) => {
     }, [state.subjectiveSelection]);
 
     return (
-        <div className={"radio-container " + type}>
-            <div className="radio-tile-group">
+        <div className={"selection-container " + type}>
+            <div className="selection-tile-group">
                 {list.map((el) => {
                     return <div className="input-container" key={el.className + "-key"}>
                         <input id={type + "-" + el.className}
-                               checked={el.value === (type === 'objective' ? state.objectiveSelection : state.subjectiveSelection)}
+                               checked={el.value === (type === 'objective' ? objSelectedValue : subjSelectedValue )}
                                onChange={(e)=> onChange(e, type)}
-                               className="radio-button"
-                               type="radio" name={"radio-" + type}
+                               className="selection-button"
+                               type="radio" name={"selection-" + type}
                                value={el.value}
                         />
-                        <div className="radio-tile">
+                        <div className="selection-tile">
                             <label htmlFor={type + "-" + el.className}
-                                   className={"radio-tile-label " + (type + "-" + el.className)}>
+                                   className={"selection-tile-label " + (type + "-" + el.className)}>
                                 {el.label}
                             </label>
                         </div>
@@ -46,11 +45,5 @@ export default (props) => {
                 })}
             </div>
         </div>
-        // <Dropdown options={list}
-        //           onChange={(e)=> {onSelect(e, type)}}
-        //           value={type === "objective" ? objSelectedValue : subjSelectedValue}
-        //           className={type}
-        //           placeholderClassName= {type === "objective" ? objSelectedValue.className : subjSelectedValue.className}
-        //           placeholder="Select an option" />
     )
 };

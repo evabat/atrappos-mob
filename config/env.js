@@ -72,6 +72,9 @@ function getClientEnvironment(publicUrl) {
         // Useful for determining whether we’re running in production mode.
         // Most importantly, it switches React into the correct mode.
         NODE_ENV: process.env.NODE_ENV || 'development',
+        THUNDERFOREST_API_KEY: process.env.THUNDERFOREST_API_KEY|| 'YOUR_THUNDERFOREST_API_KEY',
+        STADIA_API_KEY: process.env.STADIA_API_KEY || 'YOUR_STADIA_API_KEY',
+        DESKTOP_APP_URL: process.env.DESKTOP_APP_URL || 'ATRAPPOS DESKTOP URL',
         // Useful for resolving the correct path to static assets in `public`.
         // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
         // This should only be used as an escape hatch. Normally you would put
@@ -82,6 +85,7 @@ function getClientEnvironment(publicUrl) {
         // They are used as the connection `hostname`, `pathname` and `port`
         // in webpackHotDevClient. They are used as the `sockHost`, `sockPath`
         // and `sockPort` options in webpack-dev-server.
+        SERVER_URL: process.env.SERVER_URL || 'localhost:5000',
         WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
         WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
         WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,

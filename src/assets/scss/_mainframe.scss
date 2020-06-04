@@ -45,20 +45,10 @@ h5 {
 
 .logo {
   text-align: center;
-  h1 {
-    font-weight: 600;
-    color: $eastern-blue;
-  }
-  &:hover {
-    text-decoration: none !important;
-    h1 {
-      color: $scooter;
-    }
-  }
+  text-decoration: none !important;
 }
 
 .logo--landing {
-  height: 200px;
   padding-top: 40px;
   display: flex;
   flex-direction: column;
@@ -66,7 +56,7 @@ h5 {
   align-items: center;
   margin-bottom: 20px;
   img {
-    width: 120px;
+    width: 244px;
     margin-bottom: 12px;
   }
 }
