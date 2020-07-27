@@ -439,6 +439,7 @@ const AppComponent = (props) =>  {
       centerCoords: null,
       recordedPathOriginal: null,
       drawnPath: null,
+      selectedPath: null,
       pathName: null,
       pathDescr: null,
       drawType: null,
