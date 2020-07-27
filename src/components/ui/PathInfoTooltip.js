@@ -5,12 +5,19 @@ import {faLocationArrow, faUser} from "@fortawesome/free-solid-svg-icons";
 
 
 export const PathInfoTooltip = (props) => {
-    const {subj, obj, distance, area, name, description, type, drawType} = props;
+    const {subj, obj, distance, area, name, description, type, drawType, id} = props;
 
     const objSel = obj ? objectiveTypesKeyValue[obj] : null;
     const subjSel = subj ? subjectiveTypesKeyValue[subj] : null;
     return (
-       <div className={'path-list__tltp--content ' + type }>
+       <div key={'info-tltp-' + type + '-' + id}
+            className={'path-list__tltp--content ' + type }>
+           <span className='path-list__tltp--info'>
+                <span className='path-list__tltp--info__label'>{"Name: "}</span>
+                <span className="path-list__sel--label">
+                        {name ? name: '-'}
+                </span>
+            </span>
            {type === 'path-list' && objSel && subjSel ?
                <React.Fragment>
                         <span className='path-list__tltp--info'>
@@ -27,44 +34,35 @@ export const PathInfoTooltip = (props) => {
                         </span>
                </React.Fragment>
            :null}
-           {type === 'path-map' ?
+           <span className='path-list__tltp--info'>
+                <span className='path-list__tltp--info__label'>{"Distance: "}</span>
+                <span className="path-list__sel--label">
+                    {distance ? (distance / 1000).toFixed(2) + ' km': ' 0km'}
+                </span>
+            </span>
+            <span className='path-list__tltp--info'>
+                <span className='path-list__tltp--info__label'>{"Area: "}</span>
+                <span className="path-list__sel--label">
+                    {area ? area : '-'}
+                </span>
+            </span>
+           {description ?
                <span className='path-list__tltp--info'>
-                        <span className='path-list__tltp--info__label'>{"Name: "}</span>
-                        <span className="path-list__sel--label">
-                                {name ? name: '-'}
-                        </span>
-                    </span>
-               :null}
-               <span className='path-list__tltp--info'>
-                    <span className='path-list__tltp--info__label'>{"Distance: "}</span>
+                    <span className='path-list__tltp--info__label'>{"Tag: "}</span>
                     <span className="path-list__sel--label">
-                        {distance ? (distance / 1000).toFixed(2) + ' km': '-'}
+                        {description ? description : '-'}
                     </span>
                 </span>
-                <span className='path-list__tltp--info'>
-                    <span className='path-list__tltp--info__label'>{"Area: "}</span>
+           :null}
+           {drawType ?
+           <span className='path-list__tltp--info'>
+                    <span className='path-list__tltp--info__label'>{"Created: "}</span>
                     <span className="path-list__sel--label">
-                        {area ? area : '-'}
+                        <i><FontAwesomeIcon icon={drawType === 'location' ? faLocationArrow : faUser}/></i>
+                        <span>{drawType === 'location' ? 'By GPS' : 'By user'}</span>
                     </span>
-                </span>
-               {description ?
-                   <span className='path-list__tltp--info'>
-                        <span className='path-list__tltp--info__label'>{"Tag: "}</span>
-                        <span className="path-list__sel--label">
-                            {description ? description : '-'}
-                        </span>
-                    </span>
-               :null}
-               {drawType ?
-               <span className='path-list__tltp--info'>
-                        <span className='path-list__tltp--info__label'>{"Created: "}</span>
-                        <span className="path-list__sel--label">
-                            <i><FontAwesomeIcon icon={drawType === 'location' ? faLocationArrow : faUser}/></i>
-                            <span>{drawType === 'location' ? 'By GPS' : 'By user'}</span>
-                        </span>
-                </span>
-               :null}
-           </div>
-
+            </span>
+           :null}
+       </div>
     );
 };

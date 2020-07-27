@@ -1,6 +1,6 @@
 import React from 'react';
 import {objectiveTypes, subjectiveTypes} from "../../lib/constants";
-import FilterRadioSelection from "./FilterRadioSelection";
+import FilterRadioSelection from "./FilterSelection";
 
 export const FilterPaths = (props) => {
     const {active, applyFilters, filterObjective, filterSubjective} = props;

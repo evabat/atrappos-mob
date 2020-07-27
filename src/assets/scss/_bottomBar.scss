@@ -5,6 +5,7 @@
   width: 100%;
   z-index: 1010;
   display: flex;
+  display: -webkit-flex;
   &__part {
     @include flex-box(row, space-between, center);
     width: 50%;
@@ -13,14 +14,14 @@
     &--left {
       border-top-right-radius: 80px;
       a:nth-child(2) {
-        margin-right: 10px;
+        margin-right: 25px;
         border-top-right-radius: 80px;
       }
     }
     &--right {
       border-top-left-radius: 80px;
       a:first-child {
-        margin-left: 10px;
+        margin-left: 25px;
         border-top-left-radius: 80px;
       }
     }
@@ -52,6 +53,9 @@
         text-align: center;
         white-space: nowrap;
         @include font-mixin(400, 9px, 1.6);
+        @media only screen and (max-width: 340px) {
+          @include font-mixin(400, 8px, 1.6);
+        }
       }
       &.--active {
         i {
@@ -71,28 +75,32 @@
     }
   }
   .toggle-expand {
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     background-color: $white;
     padding: 5px;
     border-radius: 50%;
     position: absolute;
-    left: calc(50% - 17px);
+    left: calc(50% - 22px);
     cursor: pointer;
     border: 2px solid $java;
     @include flex-box(column, center, center);
-    bottom: 5px;
+    bottom: 2px;
     i {
       color: $java;
       font-size: 25px;
       line-height: 30px;
       @include transition-mixin(transform, 0.2s, linear);
-      &.minus {
+      &.down {
         transform: rotate(180deg);
       }
-      .plus {
+      .up {
         transform: rotate(-180deg);
       }
     }
   }
+}
+
+.popover-body {
+  font-family: $montserrat !important;
 }

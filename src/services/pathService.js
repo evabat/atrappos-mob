@@ -16,26 +16,6 @@ export default {
       store.dispatch({type: 'GET_ALL_PATHS_REJECTED', payload: err})
     }
   },
-  saveOne: async (path) => {
-    let res = await axios.post(prefix + `/api/path`, path);
-    return res.data || {};
-  },
-  editOne: async (path, id) => {
-    let res = await axios.put(prefix + `/api/path`, path, {
-      params: {
-        id: id
-      }
-    });
-    return res.data || {};
-  },
-  deleteOne: async (id) => {
-    let res = await axios.delete(prefix + `/api/path`,{
-      params: {
-        id: id
-      }
-    });
-    return res.data || {};
-  },
   async snapPath(coords, radius) {
     try {
       store.dispatch({type: 'SNAP_PATH_PENDING'})

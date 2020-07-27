@@ -18,7 +18,7 @@ export const SnapOverlay = (props) => {
             {showOverlay ?
                 <div className='snap-overlay'>
                     <div className='snap-overlay__loader'>
-                        <LoaderPin msg="Snapping path..." />
+                        <LoaderPin msg="Snapping path, please be patient if this takes too long..." />
                     </div>
                 </div>:null}
         </React.Fragment>

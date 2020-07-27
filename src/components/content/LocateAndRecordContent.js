@@ -1,20 +1,59 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {AppContext} from "../../App";
 import {
     faRecordVinyl, faStop
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {EvaluationModalBtn} from "../ui/EvaluationModalBtn";
+import {EvaluationModalBtn} from "../ui/Buttons/EvaluationModalBtn";
 import moment from "moment";
-import {EditPathBtn} from "../ui/EditPathBtn";
-import {defaultObjectiveValue, defaultSubjectiveValue} from "../../lib/constants";
-import {DiscardPathBtn} from "../ui/DiscardPathBtn";
-import {SavePathBtn} from "../ui/SavePathBtn";
+import {defaultObjectiveValue, defaultSubjectiveValue, idleTimeLimit} from "../../lib/constants";
+import {DiscardPathBtn} from "../ui/Buttons/DiscardPathBtn";
+import {SavePathBtn} from "../ui/Buttons/SavePathBtn";
 import {SnapSwitch} from "../ui/SnapSwitch";
+import {useSelector} from "react-redux";
+import { usePageVisibility } from 'react-page-visibility';
 
 export const LocateAndRecordContent = () => {
     const {state, dispatch} = useContext(AppContext);
+
+    const [idleChecker, setIdleChecker] = useState(null);
+    const consentReducer = useSelector(state => state.consent);
+
     const NoSleep =  require('nosleep.js');
+
+    const isVisible = usePageVisibility();
+
+    useEffect(()=> {
+        if (!isVisible && state.recording) {
+            setIdleChecker(new Date().getTime());
+        }
+        if (isVisible && state.recording) {
+            let currentChecker =  new Date().getTime();
+            if (currentChecker - idleChecker > idleTimeLimit ) {
+                setIdleChecker(null);
+                dispatch({
+                    ...state,
+                    recording: false,
+                    clearMap: true,
+                    objectiveSelection: defaultObjectiveValue,
+                    subjectiveSelection: defaultSubjectiveValue,
+                    pathEvaluated: false,
+                    recordedPath: null,
+                    area: null,
+                    distance: null,
+                    pathName: null,
+                    pathDescr: null,
+                    drawType: null,
+                    drawn: null,
+                    evaluations: [],
+                    edited: [],
+                    snapped: false,
+                    notificationToast: {show: true, type: 'point-out-fail', msg: 'sleptPointOutFailToast'}
+                });
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isVisible]);
 
     useEffect(() => {
         let noSleep = new NoSleep();
@@ -33,14 +72,23 @@ export const LocateAndRecordContent = () => {
                 drawStart: moment(new Date()),
                 evaluations: [],
                 edited: [],
-                snapped: false
+                snapped: false,
+                notificationToast: {show: true, type: 'point-out', msg: 'doNotSleepPointOutToast'}
             });
             noSleep.enable();
         } else {
             noSleep.disable();
         }
+        DisableGpsBtn(state.recording);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[state.recording]);
+
+    useEffect(()=> {
+        if (!consentReducer.faqShown) {
+            dispatch({...state, showFaqModal: true});
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [consentReducer.faqShown]);
 
 
     const GpsIsOn = (e) => {
@@ -50,12 +98,14 @@ export const LocateAndRecordContent = () => {
 
     const DisableGpsBtn = (disable) => {
         let gpsBtn = document.getElementsByClassName("leaflet-control-locate leaflet-bar leaflet-control active");
-        gpsBtn[0].style.pointerEvents = disable ? "none" : "initial";
-        if (disable) {
-            gpsBtn[0].classList.add("disabled")
-        } else {
-            gpsBtn[0].classList.remove("disabled")
-        }
+       if (gpsBtn && gpsBtn.length > 0) {
+           gpsBtn[0].style.pointerEvents = disable ? "none" : "initial";
+           if (disable) {
+               gpsBtn[0].classList.add("disabled")
+           } else {
+               gpsBtn[0].classList.remove("disabled")
+           }
+       }
     }
 
 
@@ -65,11 +115,14 @@ export const LocateAndRecordContent = () => {
             {!state.recordedPath ?
                 <button className={"record__btn bottom-action__btn" + (state.recording ? " record__btn--recording": "")}
                         onClick={(e)=> {
-                            if(GpsIsOn(e)) {
-                                dispatch({ ...state,
-                                    recording: !state.recording,
-                                });
-                                DisableGpsBtn(!state.recording);
+                            if (GpsIsOn(e)) {
+                                if (consentReducer.showSaveLocationConsent) {
+                                    dispatch({...state, showSaveLocationConsentModal: true})
+                                } else {
+                                    dispatch({ ...state,
+                                        recording: !state.recording,
+                                    });
+                                }
                             } else {
                                 alert('The GPS must be activated in order to record a path.')
                             }
@@ -85,7 +138,6 @@ export const LocateAndRecordContent = () => {
             }
             {state.recordedPath ?
               <React.Fragment>
-                <EditPathBtn />
                 <SnapSwitch type={"recordedPath"}/>
                 <DiscardPathBtn type="deleteRecordedPathModal" />
                 <SavePathBtn type="saveRecordedPath" />

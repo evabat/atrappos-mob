@@ -1,18 +1,17 @@
 import React, {useState, useRef, useEffect} from 'react';
 import{Overlay, Popover} from 'react-bootstrap';
-import {faComment, faInfo, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faComment, faInfo, faInfoCircle, faTimes} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {sendGaEvent} from "../../lib/utils";
 
 function InfoTooltip(props) {
-    const {id, clsName, content, placement, gaEvent, pathDetails} = props;
+    const {id, clsName, content, placement, gaEvent, pathDetails, pathName} = props;
     const [show, setShow] = useState(false);
-    const [target, setTarget] = useState(null);
-    const ref = useRef(null);
+    const containerRef = useRef(null);
+    const triggerRef = useRef(null);
 
-    const handleClick = event => {
+    const handleClick = () => {
         setShow(!show);
-        setTarget(event.target);
     };
 
     useEffect(()=> {
@@ -23,31 +22,45 @@ function InfoTooltip(props) {
 
 
     return (
-        <div className='tltp--wrapper' ref={ref}>
-            <i className={clsName + '__btn--tltp'} onClick={handleClick}>
-                {pathDetails?
-                    <span className="path-details__icons">
-                        <b className="bubble__icon">
-                            <FontAwesomeIcon icon={faComment} />
-                        </b>
-                        <b className="info__icon">
-                            <FontAwesomeIcon icon={faInfo} />
-                        </b>
-                    </span>
-
+        <div className='tltp--wrapper' ref={containerRef}
+             key={'tltp-' + id + '--wrapper'}>
+            <i className={clsName + '__btn--tltp'}
+               ref={triggerRef}
+               onClick={handleClick}>
+                {pathDetails ?
+                    <React.Fragment>
+                        <span className={"path-details__icons" + (show ? ' visible-tltp': '')}>
+                            <b className="bubble__icon">
+                                <FontAwesomeIcon icon={faComment} />
+                            </b>
+                            <b className="info__icon">
+                                <FontAwesomeIcon icon={faInfo} />
+                            </b>
+                        </span>
+                        {pathName ?
+                            <span className="path-list__item_name">
+                            {pathName}
+                        </span>
+                            :null}
+                    </React.Fragment>
                 :
                     <FontAwesomeIcon icon={faInfoCircle} />
                 }
             </i>
             <Overlay
                 show={show}
-                target={target}
+                onHide={()=> {setShow(!show)}}
                 placement={placement}
-                container={ref.current}
                 containerPadding={20}
+                container={containerRef}
+                target={triggerRef}
+                rootClose
             >
                 <Popover id={id}>
                     <Popover.Content>
+                        <i className='close-pop-overlay' onClick={()=>{setShow(!show)}}>
+                            <FontAwesomeIcon icon={faTimes} />
+                        </i>
                         {content}
                     </Popover.Content>
                 </Popover>

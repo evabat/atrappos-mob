@@ -72,9 +72,10 @@ function getClientEnvironment(publicUrl) {
         // Useful for determining whether we’re running in production mode.
         // Most importantly, it switches React into the correct mode.
         NODE_ENV: process.env.NODE_ENV || 'development',
-        THUNDERFOREST_API_KEY: process.env.THUNDERFOREST_API_KEY|| 'YOUR_THUNDERFOREST_API_KEY',
-        STADIA_API_KEY: process.env.STADIA_API_KEY || 'YOUR_STADIA_API_KEY',
-        DESKTOP_APP_URL: process.env.DESKTOP_APP_URL || 'ATRAPPOS DESKTOP URL',
+        THUNDERFOREST_API_KEY: process.env.THUNDERFOREST_API_KEY|| '<YOUR_THUNDERFOREST_API_KEY>',
+        STADIA_API_KEY: process.env.STADIA_API_KEY || '<YOUR_STADIA_API_KEY>',
+        DESKTOP_APP_URL: process.env.DESKTOP_APP_URL || '<ATRAPPOS_DESKTOP_URL>',
+		GA_ID: process.env.GA_ID || 'YOUR_GOOGLE_ANALYTICS_ID',
         // Useful for resolving the correct path to static assets in `public`.
         // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
         // This should only be used as an escape hatch. Normally you would put

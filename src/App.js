@@ -12,32 +12,33 @@ import {Header} from "./components/layout/Header";
 import {LocateAndRecord} from "./components/navigation/LocateAndRecord";
 import {BottomBar} from "./components/layout/BottomBar";
 import {DrawPath} from "./components/navigation/DrawPath";
-import {defaultObjectiveValue, defaultSubjectiveValue, toastDelay} from "./lib/constants";
-import PrivateRoute from "./components/private-route/PrivateRoute";
+import {defaultObjectiveValue, defaultSubjectiveValue, minPathMetersLimit, toastDelay} from "./lib/constants";
+import PrivateRoute from "./auth/PrivateRoute";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import ChangePassword from "./components/auth/ChangePassword";
 import Landing from "./components/layout/Landing";
 import {useSelector} from "react-redux";
-import {EvaluationModal} from "./components/ui/EvaluationModal";
+import {EvaluationModal} from "./components/ui/Modals/EvaluationModal";
 import pathService from "./services/pathService";
 import moment from "moment";
-import {ConfirmDeletionModal} from "./components/ui/ConfirmDeletionModal";
+import {ConfirmDeletionModal} from "./components/ui/Modals/ConfirmDeletionModal";
 import {NotificationToast} from "./components/ui/NotificationToast";
 import {geoToPoly, sendGaEvent} from "./lib/utils";
 import {PathList} from "./components/navigation/PathList";
-import {PathListModal} from "./components/ui/PathListModal";
 import {CommunityPathList} from "./components/navigation/CommunityPathList";
-import {CommunityPathListModal} from "./components/ui/CommunityPathListModal";
-import {MapSelectionModal} from "./components/ui/MapSelectionModal";
-import {FaqModal} from "./components/ui/FaqModal";
+import {MapSelectionModal} from "./components/ui/Modals/MapSelectionModal";
+import {FaqModal} from "./components/ui/Modals/FaqModal";
 import {isMobile} from "react-device-detect";
 import {DeviceMessage} from "./components/layout/DeviceMessage";
 import {SnapOverlay} from "./components/ui/SnapOverlay";
+import {SaveLocationConsentModal} from "./components/ui/Modals/SaveLocationConsentModal";
+import {DrawPathTutorialModal} from "./components/ui/Modals/DrawPathTutorialModal";
+import {BouncyArrow} from "./components/ui/BouncyArrow";
 
 export const AppContext = React.createContext();
 
-const trackingId = "UA-6395810-6";
+const trackingId = process.env.GA_ID;
 ReactGA.initialize(trackingId);
 
 
@@ -47,15 +48,15 @@ function reducer(state, action) {
     pathsRefetched: {$set: action.pathsRefetched},
     recording: {$set: action.recording},
     drawing: {$set: action.drawing},
-    erasing: {$set: action.erasing},
+    eraseProcedure: {$set: action.eraseProcedure},
     drawStart: {$set: action.drawStart},
     disableDraw: {$set: action.disableDraw},
     bottomExpanded: {$set: action.bottomExpanded},
     showEvaluationModal: {$set: action.showEvaluationModal},
-    showPathListModal: {$set: action.showPathListModal},
-    showCommunityPathListModal: {$set: action.showCommunityPathListModal},
     showMapSelectionModal: {$set: action.showMapSelectionModal},
     showFaqModal: {$set: action.showFaqModal},
+    showSaveLocationConsentModal: {$set: action.showSaveLocationConsentModal},
+    showDrawPathTutorialModal:  {$set: action.showDrawPathTutorialModal},
     showDeleteModal: {$set: action.showDeleteModal},
     notificationToast: {$set: action.notificationToast},
     visibleUserPaths: {$set: action.visibleUserPaths},
@@ -88,14 +89,14 @@ const initialState = {
   pathsRefetched: false,
   recording: false,
   drawing: false,
-  erasing: false,
+  eraseProcedure: false,
   disableDraw: false,
   bottomExpanded: true,
   showEvaluationModal: false,
-  showPathListModal: false,
-  showCommunityPathListModal: false,
   showMapSelectionModal: false,
   showFaqModal: false,
+  showSaveLocationConsentModal: false,
+  showDrawPathTutorialModal: false,
   showDeleteModal: {show: false, type: null,  msg: null, id: null},
   notificationToast: {show: false, type: null, msg: null},
   visibleUserPaths: [],
@@ -146,6 +147,7 @@ const AppComponent = (props) =>  {
 
   const authReducer = useSelector(state => state.auth);
 
+  const offlineReducer = useSelector(state => state.offline);
 
   useEffect(() => {
     localforage.config({
@@ -153,10 +155,8 @@ const AppComponent = (props) =>  {
       storeName: 'keyvaluepairs',
       driver: localforage.INDEXEDDB
     });
-    // TODO uncomment this
-    // localforage.removeItem('snapped-path');
+    localforage.removeItem('snapped-path');
   }, []);
-
 
   useEffect(()=> {
     if (!isMobile) {
@@ -194,6 +194,17 @@ const AppComponent = (props) =>  {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.snapped]);
 
+  useEffect(() => {
+    if (offlineReducer.lastTransaction > 0 &&
+        offlineReducer.outbox.length === 0 &&
+        offlineReducer.online &&
+        !offlineReducer.retryScheduled > 0) {
+      arrangePaths(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[offlineReducer]);
+
+
   const arrangePaths = (sync) => {
     let userId = authReducer.user.id;
     dispatch({...state, pathsRefetched: false})
@@ -210,7 +221,7 @@ const AppComponent = (props) =>  {
             setTimeout(() => {
               dispatch({...state,
                 pathsRefetched: true,
-                notificationToast: {show: true, type: 'info', msg: 'pathsSyncedSuccessToast', sync: true}
+                notificationToast: {show: true, type: 'info', msg: 'pathsSyncedSuccessToast'}
               })
             }, toastDelay);
           } else {
@@ -225,7 +236,6 @@ const AppComponent = (props) =>  {
         dispatch({...state, pathsRefetched: true});
       }
     }, (err)=> {
-      // TODO check if this is ok for offline usage...
         dispatch({...state, pathsRefetched: true});
     });
   }
@@ -259,34 +269,52 @@ const AppComponent = (props) =>  {
   const setEditEndAndDuration = (start, end) => {
     let duration = moment.duration(end.diff(start));
     let minutes = duration.asSeconds();
-    start = moment(start).format('YYYY-MM-DD HH:mm:ss');
     end = moment(end).format('YYYY-MM-DD HH:mm:ss');
-    // edited.push({date: end, state: defineEditState(), duration: minutes});
     let editObj = {date: end, state: defineEditState(), duration: minutes};
-    // edited.push(editObj);)
     dispatch({...state, edited: [...state.edited, editObj], editProcedure: false})
   }
 
-  const generateRecordedPath = (geoJSON, area) => {
-    let end = moment(new Date());
-    let duration = moment.duration(end.diff(state.drawStart));
-    let seconds = duration.asSeconds();
-    let drawEnd = moment(end).format('YYYY-MM-DD HH:mm:ss');
-    dispatch({...state,
-      reFetch: false,
-      clearMap: false,
-      recordedPath: geoJSON,
-      drawn: {date: drawEnd, duration: seconds},
-      coordsCopy: geoJSON.geometry.coordinates,
-      recordedPathOriginal: geoJSON
-    })
+  const generateRecordedPath = (geoJSON, distance) => {
+    if (distance < minPathMetersLimit) {
+      dispatch({
+        ...state,
+        clearMap: true,
+        objectiveSelection: defaultObjectiveValue,
+        subjectiveSelection: defaultSubjectiveValue,
+        pathEvaluated: false,
+        recordedPath: null,
+        area: null,
+        distance: null,
+        pathName: null,
+        pathDescr: null,
+        drawType: null,
+        drawn: null,
+        evaluations: [],
+        edited: [],
+        snapped: false,
+        notificationToast: {show: true, type: 'point-out-fail', msg: 'notEnoughMetersPointOutFailToast'}
+      });
+    } else {
+      let end = moment(new Date());
+      let duration = moment.duration(end.diff(state.drawStart));
+      let seconds = duration.asSeconds();
+      let drawEnd = moment(end).format('YYYY-MM-DD HH:mm:ss');
+      dispatch({...state,
+        reFetch: false,
+        clearMap: false,
+        recordedPath: geoJSON,
+        drawn: {date: drawEnd, duration: seconds},
+        coordsCopy: geoJSON.geometry.coordinates,
+        recordedPathOriginal: geoJSON
+      });
+    }
   }
 
   const setEditStartProcedure = (editing) => {
     dispatch({...state, editProcedure: editing})
   }
 
-  const drawnPathActions = (geoJSON, area) => {
+  const drawnPathActions = (geoJSON) => {
     let end = moment(new Date());
     let duration = moment.duration(end.diff(state.drawStart));
     let seconds = duration.asSeconds();
@@ -309,7 +337,7 @@ const AppComponent = (props) =>  {
   }
 
   const stoppedErasing = (erasing) => {
-    dispatch({...state, erasing: !erasing})
+    dispatch({...state, eraseProcedure: !erasing})
   }
 
   const resetDrawnPath = () => {
@@ -381,6 +409,47 @@ const AppComponent = (props) =>  {
     dispatch({...state, distance: distance});
   }
 
+  const cancelEverything = () => {
+    dispatch({
+      ...state,
+      clearMap: false,
+      pathsRefetched: false,
+      recording: false,
+      drawing: false,
+      eraseProcedure: false,
+      disableDraw: false,
+      bottomExpanded: true,
+      showEvaluationModal: false,
+      showMapSelectionModal: false,
+      showFaqModal: false,
+      showSaveLocationConsentModal: false,
+      showDrawPathTutorialModal: false,
+      showDeleteModal: {show: false, type: null,  msg: null, id: null},
+      notificationToast: {show: false, type: null, msg: null},
+      visibleUserPaths: [],
+      visibleCommunityPaths: [],
+      editProcedure: false,
+      objectiveSelection: defaultObjectiveValue,
+      subjectiveSelection: defaultSubjectiveValue,
+      pathEvaluated: false,
+      recordedPath: null,
+      area: null,
+      distance: null,
+      coordsCopy: null,
+      centerCoords: null,
+      recordedPathOriginal: null,
+      drawnPath: null,
+      pathName: null,
+      pathDescr: null,
+      drawType: null,
+      drawn: null,
+      evaluations: [],
+      edited: [],
+      snapped: false
+    });
+    localforage.removeItem('snapped-path');
+  }
+
   return (
     <div className="App">
         <AppContext.Provider value={{ state, dispatch }}>
@@ -418,6 +487,7 @@ const AppComponent = (props) =>  {
                 setPathDistance={setPathDistance}
                 location={location.pathname}
                 cancelDraw={cancelDraw}
+                cancelEverything={cancelEverything}
               />:null}
               <Switch>
                 <Route exact path="/home" component={withRouter(Landing)} />
@@ -431,14 +501,15 @@ const AppComponent = (props) =>  {
                 <PrivateRoute  authed={authReducer.isAuthenticated} exact path='/community' component={CommunityPathList} />}/>
                 <Route path="/" render={()=> <Redirect to="/home"/>}/>
               </Switch>
+              <BouncyArrow />
               <BottomBar/>
               <EvaluationModal />
-              <PathListModal arrangePaths={arrangePaths} />
-              <CommunityPathListModal />
               <MapSelectionModal />
               <FaqModal />
               <ConfirmDeletionModal />
               <NotificationToast />
+              <SaveLocationConsentModal />
+              <DrawPathTutorialModal />
               <SnapOverlay />
             </section>
           </main>

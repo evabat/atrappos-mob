@@ -26,7 +26,6 @@ $java: #20adc5;
 $curious-blue: #209CC5;
 $cranberry: #DB5079;
 $red-orange: #F62C3A;
-$malachite: #0EBE64;
 $iceberg: #DCF4EC;
 $sea-green: #2F7F60;
 $bizarre: #F0DBDC;
@@ -34,6 +33,7 @@ $stiletto: #96363B;
 $polar: #e9f9fb;
 $prim: #eddee3;
 $flame-pea: #DF5B34;
+$gamboge: #E19F09;
 $cadillac: #B44B75;
 $vin-rouge: #984365;
 $hint-of-red: #F7F3F4;
@@ -48,6 +48,14 @@ $paradiso: #327E8B;
 $onahau: #c9f5ff;
 $elm: #217B8C;
 $ming: #2F756A;
+$cerulean-blue: #3930D9;
+$red-violet: #B31E8B;
+$razzmatazz: #D40C5C;
+$bright-turquoise: #12CBF3;
+$prelude: #DBC3E9;
+$gigas: #54328B;
+$cavern-pink: #E9C3CD;
+$camelot: #8B324B;
 
 
 /* Final visual enumeration */
@@ -74,19 +82,26 @@ $radio-bg-hover: $silver;
 $eval-modal-widths: calc(100% - 40px);
 
 
-
 @mixin flex-box($direction, $justify, $align) {
   display: flex;
+  display: -webkit-flex;
   flex-direction: $direction;
+  -webkit-flex-direction: $direction;
   justify-content: $justify;
+  -webkit-justify-content: $justify;
   align-items: $align;
+  -webkit-align-items: $align;
 }
 
 @mixin inline-flex-box($direction, $justify, $align) {
   display: inline-flex;
+  display: -webkit-inline-flex;
   flex-direction: $direction;
+  -webkit-flex-direction: $direction;
   justify-content: $justify;
+  -webkit-justify-content: $justify;
   align-items: $align;
+  -webkit-align-items: $align;
 }
 
 @mixin font-mixin($weight, $size, $line, $family: $montserrat) {
@@ -97,6 +112,9 @@ $eval-modal-widths: calc(100% - 40px);
   background-color: $bg-color;
   color: $color;
   border: $border-width solid $border-clr;
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 @mixin reset-btn-styles ($brdr-radius: 0, $padding: 5px 10px,  $outline-clr: transparent) {
@@ -158,6 +176,31 @@ $eval-modal-widths: calc(100% - 40px);
   }
 }
 
+.gesture-sprite {
+  background-image: url("../../assets/img/tutorial_gestures.png");
+  background-repeat: no-repeat;
+  width: 70px; height: 70px;
+  margin: 3px;
+}
+
+.gesture1 {
+  background-position: 0 0;
+}
+
+.gesture2 {
+  background-position: -76px 0;
+}
+
+.gesture3 {
+  background-position: -153px 0;
+}
+
+.gesture4 {
+  background-position: -229px 0;
+}
+
+
+
 @-webkit-keyframes enlarge {
   0% {
     -webkit-transform: scale(1, 1); }
@@ -199,4 +242,17 @@ $eval-modal-widths: calc(100% - 40px);
   100% {
     transform: scale(1, 1);
   }
+}
+
+
+.bouncy-arrow {
+  animation: bouncy 0.8s infinite ease;
+}
+
+@keyframes bouncy {
+  0%   { transform: scale(1,1)    translateY(0); }
+  10%  { transform: scale(1.1,.9) translateY(0); }
+  30%  { transform: scale(.9,1.1) translateY(-8px); }
+  50%  { transform: scale(1,1)    translateY(0); }
+  100% { transform: scale(1,1)    translateY(0); }
 }

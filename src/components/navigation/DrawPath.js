@@ -1,5 +1,5 @@
 import React from 'react';
-import {BottomContainer} from "../ui/BottomContainer";
+import {BottomContainer} from "../layout/BottomContainer";
 import {withRouter} from "react-router-dom";
 
 const DrawPathComponent = () => {

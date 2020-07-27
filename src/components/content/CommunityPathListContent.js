@@ -1,5 +1,5 @@
 import React from 'react';
-import {CommunityPathListModalBtn} from "../ui/CommunityPathListModalBtn";
+import {CommunityPathListView} from "./CommunityPathListView";
 
 
 export const CommunityPathListContent = () => {
@@ -7,7 +7,7 @@ export const CommunityPathListContent = () => {
         <div className="path-list__content bottom__content">
             <h5>{"Community paths"}</h5>
                 <React.Fragment>
-                    <CommunityPathListModalBtn />
+                    <CommunityPathListView />
             </React.Fragment>
         </div>
     );

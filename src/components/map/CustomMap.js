@@ -15,45 +15,30 @@ import {
 import Geocoder from 'leaflet-control-geocoder';
 // eslint-disable-next-line
 import { GestureHandling } from "leaflet-gesture-handling";
-import {loginUser, updateUser} from "../../services/authService";
+import {loginUser} from "../../services/authService";
 import moment from "moment";
 import {
     defaultObjectiveValue,
-    defaultSubjectiveValue,
+    defaultSubjectiveValue, drawLocalOpts, locateOpts,
     mapLayers, subjectiveTypesKeyValue
 } from "../../lib/constants";
 import LocateControl from './LocateControl.js';
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
-import {getRandomInt, sendGaEvent} from "../../lib/utils";
+import {cancelMapEvent, getRandomInt, isFunction, sendGaEvent} from "../../lib/utils";
 import {PathInfoTooltip} from "../ui/PathInfoTooltip";
 
 
-// const southWest = L.latLng( 37.273073, 23.033121),
-//     northEast = L.latLng(38.325771, 24.134307),
-//     bounds = L.latLngBounds(southWest, northEast);
 const southWest = L.latLng( 34.582754, 19.072326),
     northEast = L.latLng(41.948798, 29.382288),
     bounds = L.latLngBounds(southWest, northEast);
 
-const locateOptions = {
-    position: 'topright',
-    drawCircle: false,
-    enableHighAccuracy: true,
-    icon: "location-gps",
-    iconLoading: "loading-gps",
-    showCompass: true,
-    strings: {
-        title: 'Locate me!'
-    },
-    keepCurrentZoomLevel: true,
-    locateOptions: {
-        watch: true
-    }
-};
+const locateOptions = locateOpts;
 
 delete L.Icon.Default.prototype._getIconUrl;
+
+L.drawLocal = drawLocalOpts;
 
 class CustomMap extends Component {
     constructor(props) {
@@ -97,7 +82,6 @@ class CustomMap extends Component {
     }
 
 
-
     UNSAFE_componentWillMount() {
         let latlng = new L.LatLng(37.9754983,  23.7356671);
         this.setState({
@@ -126,12 +110,6 @@ class CustomMap extends Component {
                 _this.setState(prevState => {
                     return {
                         locationPolyCoords: prevState.locationPolyCoords.length <= 0 ? [[loc.latitude, loc.longitude]] : [...prevState.locationPolyCoords, [loc.latitude, loc.longitude]]
-                    // locationPolyCoords: [
-                    //         [37.965347, 23.701544 ],
-                    //         [37.965837, 23.703218 ],
-                    //         [37.963553, 23.701952 ],
-                    //         [37.962775, 23.700707 ],
-                    //         [37.962775, 23.700235 ]]
                     }
                 }, () => {
                     console.log("on location found", _this.state.locationPolyCoords)
@@ -277,12 +255,34 @@ class CustomMap extends Component {
         if (prevProps.visibleUserPaths !== this.props.visibleUserPaths) {
             this.setState({
                     selectedUserPaths: this.props.visibleUserPaths
+            }, ()=> {
+                let map = this.mapRef.current;
+                let latLons = this.state.selectedUserPaths.map((path) => {
+                    return path.geometry.coordinates.map((coords) => {
+                        return [coords[1], coords[0]]
+                    })
+                }).flat(1);
+                if (map && latLons.length > 0) {
+                    let mapLeaf= map.leafletElement;
+                    mapLeaf.fitBounds(latLons);
+                }
             })
         }
 
         if (prevProps.visibleCommunityPaths !== this.props.visibleCommunityPaths) {
             this.setState({
                 selectedCommunityPaths: this.props.visibleCommunityPaths
+            }, () => {
+                let map = this.mapRef.current;
+                let latLons = this.state.selectedCommunityPaths.map((path) => {
+                    return path.geometry.coordinates.map((coords) => {
+                        return [coords[1], coords[0]]
+                    })
+                }).flat(1);
+                if (map && latLons.length > 0) {
+                    let mapLeaf= map.leafletElement;
+                    mapLeaf.fitBounds(latLons);
+                }
             })
         }
 
@@ -319,6 +319,11 @@ class CustomMap extends Component {
                 tileLayer: this.props.mapLayers.mapLayer
             })
         }
+
+        window.onpopstate = e => {
+            cancelMapEvent(e);
+            this.props.cancelEverything();
+        }
     }
 
     generateGeoJSON(type) {
@@ -329,10 +334,17 @@ class CustomMap extends Component {
                 if (geoJSON.geometry.type === 'LineString') {
                     let latlng = fg._layers[key]._latlngs[0];
                     this.getLocationName(latlng, Math.round(parseInt(this.state.zoom)));
-                    this.getPathDistance(fg._layers[key]._latlngs);
-                    if (type === 'recorded') {
-                        this.props.generateRecordedPath(geoJSON);
-                    }
+                    let that = this;
+                    this.getPathDistance(fg._layers[key]._latlngs, function(resDistance) {
+                        if (resDistance) {
+                            that.setState({
+                                distance: resDistance
+                            });
+                            if (type === 'recorded') {
+                                that.props.generateRecordedPath(geoJSON, resDistance);
+                            }
+                        }
+                    });
                 }
             })
         } else {
@@ -505,7 +517,7 @@ class CustomMap extends Component {
         })
     }
 
-    getPathDistance(latLngs) {
+    getPathDistance(latLngs, callback) {
         let tempLatLng = null;
         let totalDistance = 0.00000;
         latLngs.forEach((latlng, idx)=> {
@@ -515,10 +527,9 @@ class CustomMap extends Component {
             }
             totalDistance += tempLatLng.distanceTo(latlng);
             tempLatLng = latlng;
-        });
-
-        this.setState({
-            distance: totalDistance
+            if (idx === (latLngs.length - 1) && isFunction(callback)) {
+               callback(totalDistance);
+            }
         });
     }
 
@@ -544,7 +555,7 @@ class CustomMap extends Component {
                     attribution={mapLayers[this.state.tileLayer].attribution}
                 />
                 <AttributionControl position="topright" prefix={false} />
-                <LocateControl options={locateOptions} />
+                <LocateControl options={locateOptions} startDirectly />
                 <FeatureGroup ref={ (reactFGref) => {
                     this._onFeatureGroupReady(reactFGref)}}>
                     {this.state.locationPolyCoords && this.state.locationPolyCoords.length > 0 ?
@@ -598,6 +609,7 @@ class CustomMap extends Component {
                                                              description={path.description}
                                                              drawType={path.drawType}
                                                              type='path-map'
+                                                             id={path._id}
                                             />
                                         </Popup>
                                     </GeoJSON>
@@ -611,6 +623,7 @@ class CustomMap extends Component {
                                                              description={path.description}
                                                              drawType={path.drawType}
                                                              type='path-map'
+                                                             id={path._id}
                                             />
                                         </Popup>
                                     </Marker>
@@ -624,6 +637,7 @@ class CustomMap extends Component {
                                                              description={path.description}
                                                              drawType={path.drawType}
                                                              type='path-map'
+                                                             id={path._id}
                                             />
                                         </Popup>
                                     </Marker>
@@ -639,7 +653,10 @@ class CustomMap extends Component {
                                 <React.Fragment>
                                     <GeoJSON  key={path._id}
                                               data={path}
-                                              style={{weight: path.properties.objective, color: path.properties.subjective}}>
+                                              style={{weight: path.properties.objective,
+                                                  color: path.properties.subjective,
+                                                  opacity: path.userId !== this.props.auth.user.id ? '0.55' : '1'
+                                              }}>
                                         <Popup>
                                             <PathInfoTooltip distance={path.distance}
                                                              area={path.area}
@@ -660,6 +677,7 @@ class CustomMap extends Component {
                                                              description={path.description}
                                                              drawType={path.drawType}
                                                              type='path-map'
+                                                             id={path._id}
                                             />
                                         </Popup>
                                     </Marker>
@@ -673,6 +691,7 @@ class CustomMap extends Component {
                                                              description={path.description}
                                                              drawType={path.drawType}
                                                              type='path-map'
+                                                             id={path._id}
                                             />
                                         </Popup>
                                     </Marker>
@@ -697,5 +716,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { loginUser, updateUser }
+    { loginUser }
 )(CustomMap);

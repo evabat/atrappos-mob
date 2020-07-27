@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {NavLink, withRouter} from "react-router-dom";
 import {
+    faChevronUp,
     faDrawPolygon,
-    faLocationArrow, faMinus, faPlus,
+    faLocationArrow,
     faRoute, faUsers
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,8 +55,8 @@ const BottomBarComponent = (props) => {
     return (
        <div className="bottom-bar">
            <div className="toggle-expand" onClick={()=> dispatch({...state, bottomExpanded: !state.bottomExpanded})}>
-               <i className={state.bottomExpanded ? "minus" : "plus"}>
-                   <FontAwesomeIcon icon={state.bottomExpanded ? faMinus : faPlus} />
+               <i className={state.bottomExpanded ? "down" : "up"}>
+                   <FontAwesomeIcon icon={faChevronUp} />
                </i>
            </div>
            <nav>
@@ -65,7 +66,7 @@ const BottomBarComponent = (props) => {
                             className={drawing || drawnPath || selectedPath ? "disabled" : ""}
                             activeClassName="--active">
                        <i><FontAwesomeIcon icon={faLocationArrow} /></i>
-                       <span>RECORD</span>
+                       <span>LOCATION</span>
                    </NavLink>
                    <NavLink to={"/draw"}
                             onClick={(e)=> {handleNavClick(e, (recording || recordedPath || selectedPath || drawing || drawnPath ))}}

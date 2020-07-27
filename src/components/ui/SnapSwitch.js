@@ -59,7 +59,10 @@ export const SnapSwitch = (props) => {
                             dispatch({...state, snapped: true});
                         });
                     }, (err)=> {
-                        //TODO show toast here
+                        dispatch({
+                            ...state,
+                            notificationToast: {show: true, type: 'error', msg: 'snapToRoadErrorToast'}
+                        });
                     })
                 } else {
                     dispatch({...state, snapped: true});
@@ -79,7 +82,7 @@ export const SnapSwitch = (props) => {
                              gaEvent={"snap-" + type + "-info"}
                              content={tooltipContent[type === 'selectedPath' ? 'snapAfter': 'snapBefore']}/>
                 <div className="snap__label">
-                    Match to map
+                    Match to roads
                 </div>
                 <div className="snap__switch">
                     <label className={"switch" + (alreadyChecked || fetchingSnap ? " disabled" : "") }>

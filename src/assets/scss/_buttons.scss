@@ -69,44 +69,6 @@
   }
 }
 
-.path-list {
-  &__btn {
-    &--submit {
-      @include action-btn-styles($cadillac, $white, 2px, $cadillac);
-      width: 85px;
-      &:hover,
-      &:active,
-      &:focus {
-        background-color: $cadillac !important;
-        border-color: $cadillac !important;
-        box-shadow: none !important;
-      }
-    }
-    &--cancel {
-      width: 85px;
-    }
-  }
-}
-
-.community-path-list {
-  &__btn {
-    &--submit {
-      @include action-btn-styles($steel-blue, $white, 2px, $steel-blue);
-      width: 85px;
-      &:hover,
-      &:active,
-      &:focus {
-        background-color: $steel-blue !important;
-        border-color: $steel-blue !important;
-        box-shadow: none !important;
-      }
-    }
-    &--cancel {
-      width: 85px;
-    }
-  }
-}
-
 .map-selection {
   &__btn {
     padding: 10px;
@@ -136,27 +98,25 @@
   }
 }
 
-.faq {
+.save-location-consent {
   &__btn {
-    @include action-btn-styles($java, $white, 2px, $java);
-    padding: 10px;
-    line-height: 1 !important;
-    font-weight: 500;
-    border-radius: 5px;
-    &:hover,
-    &:active,
-    &:focus {
-      background-color: $java !important;
-      border-color: $java !important;
-      box-shadow: none !important;
-    }
-    i {
-      font-size: 14px;
-      margin-right: 8px;
-    }
-    span {
-      font-size: 12px;
-    }
+      @include action-btn-styles($cerulean-blue, $white, 2px, $cerulean-blue);
+      width: 110px;
+      white-space: nowrap;
+      i {
+        font-size: 20px;
+        margin-right: 10px;
+      }
+      span {
+        @include font-mixin(500, 14px, 1.2);
+      }
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: $cerulean-blue !important;
+        border-color: $cerulean-blue !important;
+        box-shadow: none !important;
+      }
   }
 }
 
@@ -164,25 +124,23 @@
   @include action-btn-styles($cranberry, $white, 1px, $cranberry);
 }
 
-.discard-path__btn,
-.erase-path__btn {
+.discard-path__btn {
   @include action-btn-styles($red-orange, $white, 1px, $red-orange);
+}
+
+.erase-path__btn {
+  @include action-btn-styles($gamboge, $white, 1px, $gamboge);
 }
 
 .draw-path__btn {
   @include action-btn-styles($flame-pea, $white, 1px, $flame-pea);
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 .save-path__btn {
-  @include action-btn-styles($malachite, $white, 1px, $malachite);
-}
-
-.show-path-list-modal__btn {
-  @include action-btn-styles($cadillac, $white, 1px, $cadillac);
-}
-
-.show-community-path-list-modal__btn {
-  @include action-btn-styles($steel-blue, $white, 1px, $steel-blue);
+  @include action-btn-styles($ocean-green, $white, 1px, $ocean-green);
 }
 
 .undo-edit-path__btn {

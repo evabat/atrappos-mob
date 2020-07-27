@@ -4,7 +4,6 @@ import blueMarker from '../assets/img/marker-icon-blue.png';
 import violetMarker from '../assets/img/marker-icon-violet.png';
 import orangeMarker from '../assets/img/marker-icon-orange.png';
 import redMarker from '../assets/img/marker-icon-red.png';
-import goldMarker from '../assets/img/marker-icon-gold.png';
 import shadow from '../assets/img/marker-shadow.png';
 
 
@@ -53,41 +52,38 @@ export const redMarkerIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
-export const goldMarkerIcon = new L.Icon({
-    iconUrl: goldMarker,
-    shadowUrl: shadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
 
-
-export const objectiveTypes =
-    [
-        {label:'Select walking evaluation', value: '3', className: 'lvl-def'},
-        {label:'Excellent', value: '10', className: 'lvl-5'},
-        {label:'Very Good', value: '8', className: 'lvl-4'},
-        {label:'Decent', value: '6', className: 'lvl-3'},
-        {label:'Not so Good', value: '4', className:'lvl-2'},
-        {label:'Poor', value: '2', className: 'lvl-1'}];
+export const objectiveTypes = [
+    {label:'Select walking evaluation', value: '5', className: 'lvl-def'},
+    {label:'Excellent', value: '10', className: 'lvl-5'},
+    {label:'Very Good', value: '8', className: 'lvl-4'},
+    {label:'Decent', value: '6', className: 'lvl-3'},
+    {label:'Not so Good', value: '4', className:'lvl-2'},
+    {label:'Poor', value: '2', className: 'lvl-1'}
+];
 
 export const subjectiveTypes = [
-    {label:'Select visual evaluation', value: '#7D98A1', className: 'lvl-def'},
-    {label: 'Awesome', value: '#12C416', className: 'lvl-5'},
-    {label: 'Very pleasing', value: '#3D7AF5', className: 'lvl-4'},
+    {label:'Select visual evaluation', value: '#42f5e0', className: 'lvl-def'},
+    {label: 'Magnificent', value: '#12C416', className: 'lvl-5'},
+    {label: 'Very Pleasing', value: '#3D7AF5', className: 'lvl-4'},
     {label: 'Fair', value: '#B054F8', className: 'lvl-3'},
-    {label: 'Not so pleasing', value: '#F27418', className: 'lvl-2'},
+    {label: 'Not so Pleasing', value: '#F27418', className: 'lvl-2'},
     {label: 'Unpleasant', value: '#F41A1A', className:'lvl-1'},
 ];
 
-export const defaultSubjectiveValue = '#7D98A1';
 
-export const defaultObjectiveValue = '3';
+export const defaultSubjectiveValue = '#42f5e0';
 
-export const filterLbl = 'Filter Selections';
+export const defaultObjectiveValue = '5';
+
+export const filterLbl = 'Filter selections';
 
 export const toastDelay = 1500;
+
+export const pointOutToastDelay = 4500;
+
+export const idleTimeLimit = 180000; // 3 minutes
+export const minPathMetersLimit = 20;
 
 export const objectiveTypesKeyValue = {
     '10': {label:'Excellent', className: 'lvl-5'},
@@ -97,39 +93,55 @@ export const objectiveTypesKeyValue = {
     '2': {label:'Poor', className: 'lvl-1'}
 }
 
+export const objectiveTypesSortLabels = [
+    'Excellent', 'Very Good', 'Decent', 'Not so Good', 'Poor'
+]
+
 export const subjectiveTypesKeyValue = {
     '#12C416': {label: 'Magnificent', className: 'lvl-5', marker: greenMarkerIcon},
-    '#3D7AF5': {label: 'Very pleasing', className: 'lvl-4', marker: blueMarkerIcon},
+    '#3D7AF5': {label: 'Very Pleasing', className: 'lvl-4', marker: blueMarkerIcon},
     '#B054F8': {label: 'Fair', className: 'lvl-3', marker: violetMarkerIcon},
-    '#F27418': {label: 'Not so pleasing', className: 'lvl-2', marker: orangeMarkerIcon},
+    '#F27418': {label: 'Not so Pleasing', className: 'lvl-2', marker: orangeMarkerIcon},
     '#F41A1A': {label: 'Unpleasant', className:'lvl-1', marker: redMarkerIcon}
 };
 
+export const subjectiveTypesSortLabels = [
+    'Magnificent', 'Very Pleasing', 'Fair', 'Not so Pleasing', 'Unpleasant'
+]
+
 export const notificationMsgs = {
     deleteRecordedPathModal: 'Are you sure you want to discard this recorded path? This cannot be undone.',
+    deleteDrawnPathModal: 'Are you sure you want to discard this drawn path? This cannot be undone.',
     deleteSelectedPathModal: 'Are you sure you want to permanently delete this path? This cannot be undone.',
     undoSelectedPathModal: "You have unsaved changes, are you sure you want to go back?",
     deletedRecordedPathToast: 'The recorded path was discarded.',
+    deletedDrawnPathToast: 'The drawn path was discarded.',
     undoSelectedPathToast: 'The changes were reverted.',
     deleteSelectedPathSuccessToast: 'Your change for deleting this path is submitted.',
     deleteSelectedPathSuccessToastOffline: 'You are currently offline, but your path will be deleted when you are back in the network! (You will be notified).',
     deleteSelectedPathErrorToast: 'An error occurred, failed to delete the path.',
-    saveRecordedPathSuccessToast: 'Your change for saving this path is submitted.',
+    snapToRoadErrorToast: 'An error occurred, the process of matching the path to road has failed.',
+    saveRecordedPathSuccessToast: 'Your recorded path is submitted.',
     saveRecordedPathSuccessToastOffline: 'You are currently offline, but your path will be saved when you are back in the network! (You will be notified)',
     saveRecordedPathErrorToast: 'An error occurred, failed to modify the path.',
-    saveSelectedPathSuccessToast: 'Your change for saving this modified path is submitted.',
+    saveSelectedPathSuccessToast: 'Your modified path is submitted.',
     saveSelectedPathSuccessToastOffline: 'You are currently offline, but your path will be modified when you are back in the network! (You will be notified)',
     saveSelectedPathErrorToast: 'An error occurred, failed to save the path.',
-    saveDrawnPathSuccessToast: 'Your change for saving this path is submitted.',
+    saveDrawnPathSuccessToast: 'Your new path is submitted.',
     saveDrawnPathSuccessToastOffline: 'You are currently offline, but your path will be saved when you are back in the network! (You will be notified)',
     saveDrawnPathErrorToast: 'An error occurred, failed to save the path.',
-    pathsSyncedSuccessToast: 'The path list is updated.'
+    pathsSyncedSuccessToast: 'Path list updated.',
+    doNotSleepPointOutToast: 'Please do not minimize your browser, switch tab, or put your phone to sleep for over 3 minutes while recording! Record at least 20 meters.',
+    notEnoughMetersPointOutFailToast: "Nope. That won't do. You must record at least 20 meters :)",
+    sleptPointOutFailToast: "You minimized your browser, switched tab, or put your phone to sleep for over 3 minutes :("
 }
 
 export const tooltipContent = {
-    snapBefore: "In case of any GPS inconsistencies, you can use this service to match automatically your path with a trail on the map. If you don't want to keep this change, just turn the switch off. You will also be able to use this service after saving your path. This service is available only while being online.",
-    snapAfter: "In case of any GPS inconsistencies, you can use this service to match automatically your path with a trail on the map. If you don't want to keep this change, just turn the switch off. You won't be able to turn this off after saving a path in On mode. This service is available only while being online.",
-    description: "Type any kind of information that is worth mentioning. It will be added to the path as a description tag (available in the path's pop-up info)."
+    snapBefore: "In case of any GPS inconsistencies, you can use this service to match automatically your path with a road on the map. If you don't want to keep this change, just turn the switch off. You will also be able to use this service after saving your path. This service is available only while being online.",
+    snapAfter: "In case of any GPS inconsistencies, you can use this service to match automatically your path with a road on the map. If you don't want to keep this change, just turn the switch off. You won't be able to turn this off after saving a path in On mode. This service is available only while being online.",
+    description: "Type any kind of information that is worth mentioning. It will be added to the path as a description tag (available in the path's pop-up info).",
+    walkability: "Your criteria can be: The ease of access, lack of obstacles, safety, comfort, relaxation, refreshment, quality of the path and how engaging is the physical activity.",
+    landscape: "Your criteria can be: The beauty of the landscape, the feelings that the sights are provoking, how happy makes you the built-in environment and how eye-friendly is the view."
 }
 
 export const mapLayersTitles= ['osmMapnik',  'esriWorldImagery', 'esriWorldStreetMap', 'osmHot', 'osmTopo', 'stadiaAlidadeSmooth',
@@ -260,3 +272,128 @@ export const mapLayers =
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }
     };
+
+export const drawLocalOpts = {
+    draw: {
+        toolbar: {
+            actions: {
+                title: "Cancel drawing",
+                text: "Cancel"
+            },
+            finish: {
+                title: "Finish drawing",
+                text: "Finish"
+            },
+            undo: {
+                title: "Delete last point drawn",
+                text: "Delete last point"
+            },
+            buttons: {
+                polyline: "Draw a polyline",
+                polygon: "Draw a polygon",
+                rectangle: "Draw a rectangle",
+                circle: "Draw a circle",
+                marker: "Draw a marker",
+                circlemarker: "Draw a circlemarker"
+            }
+        },
+        handlers: {
+            circle: {
+                tooltip: {
+                    start: "Click and drag to draw circle."
+                },
+                radius: "Radius"
+            },
+            circlemarker: {
+                tooltip: {
+                    start: "Click map to place circle marker."
+                }
+            },
+            marker: {
+                tooltip: {
+                    start: "Click map to place marker."
+                }
+            },
+            polygon: {
+                tooltip: {
+                    start: "Click to start drawing shape.",
+                    cont: "Click to continue drawing shape.",
+                    end: "Click first point to close this shape."
+                }
+            },
+            polyline: {
+                error: "<strong>Error:</strong> shape edges cannot cross!",
+                tooltip: {
+                    start: "Click to start drawing line.",
+                    cont: "Click to continue drawing line.",
+                    end: "Click last point to finish line."
+                }
+            },
+            rectangle: {
+                tooltip: {
+                    start: "Click and drag to draw rectangle."
+                }
+            },
+            simpleshape: {
+                tooltip: {
+                    end: "Release mouse to finish drawing."
+                }
+            }
+        }
+    },
+    edit: {
+        toolbar: {
+            actions: {
+                save: {
+                    title: "Finish changes",
+                    text: "Finish"
+                },
+                cancel: {
+                    title: "Cancel editing, discards all changes",
+                    text: "Cancel"
+                },
+                clearAll: {
+                    title: "Clear all layers",
+                    text: "Clear All"
+                }
+            },
+            buttons: {
+                edit: "Edit layers",
+                editDisabled: "No layers to edit",
+                remove: "Delete layers",
+                removeDisabled: "No layers to delete"
+            }
+        },
+        handlers: {
+            edit: {
+                tooltip: {
+                    text: "Drag handles to edit features.",
+                    subtext: "Click cancel to undo changes."
+                }
+            },
+            remove: {
+                tooltip: {
+                    text: "Click on a feature to remove."
+                }
+            }
+        }
+    }
+};
+
+export const locateOpts = {
+    position: 'topright',
+    drawCircle: false,
+    enableHighAccuracy: true,
+    icon: "location-gps",
+    iconLoading: "loading-gps",
+    showCompass: true,
+    strings: {
+        title: 'Locate me!'
+    },
+    keepCurrentZoomLevel: true,
+    locateOptions: {
+        watch: true
+    }
+};
+
+

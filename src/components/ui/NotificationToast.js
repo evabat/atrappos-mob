@@ -2,12 +2,12 @@ import React, {useContext, useEffect, useState} from "react";
 import {Toast} from "react-bootstrap";
 import {
     faCheckCircle, faExclamationCircle, faSyncAlt,
-    faTimesCircle
+    faTimesCircle, faHandPointRight, faThumbsDown
 
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {AppContext} from "../../App";
-import {notificationMsgs, toastDelay} from "../../lib/constants";
+import {notificationMsgs, toastDelay, pointOutToastDelay} from "../../lib/constants";
 import {useSelector} from "react-redux";
 
 export const NotificationToast = (props) => {
@@ -44,7 +44,7 @@ export const NotificationToast = (props) => {
             <Toast className={"notification-toast " + (type)}
                    onClose={handleClose}
                    show={show}
-                   delay={toastDelay} autohide >
+                   delay={(type && !type.startsWith('point-out')) ? toastDelay : pointOutToastDelay} autohide >
                 <Toast.Header>
                 </Toast.Header>
                 <Toast.Body>
@@ -57,6 +57,10 @@ export const NotificationToast = (props) => {
                             <FontAwesomeIcon icon={faSyncAlt} />:null}
                         {type === "warning" ?
                             <FontAwesomeIcon icon={faExclamationCircle} />:null}
+                        {type === "point-out" ?
+                            <FontAwesomeIcon icon={faHandPointRight} />:null}
+                        {type === "point-out-fail" ?
+                            <FontAwesomeIcon icon={faThumbsDown} />:null}
                     </span>
                     <span>{isOffline && notificationMsgs[msg + 'Offline'] ?
                         notificationMsgs[msg + 'Offline'] : notificationMsgs[msg]}</span>

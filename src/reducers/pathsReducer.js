@@ -9,7 +9,8 @@ const initialState = {
         fetching: false,
         fetched: false,
         payload: null
-    }
+    },
+    rehydrated: false
 };
 
 export default function(state = initialState, action) {
@@ -44,7 +45,8 @@ export default function(state = initialState, action) {
                 allPaths: {
                     fetching: false,
                     fetched: true
-                }
+                },
+                rehydrated: true
             };
         case 'SNAP_PATH_PENDING':
             return {
