@@ -1,7 +1,7 @@
 import React, {} from 'react';
 import {objectiveTypesKeyValue, subjectiveTypesKeyValue} from "../../lib/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLocationArrow, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faLocationArrow, faMobileAlt, faDesktop} from "@fortawesome/free-solid-svg-icons";
 
 
 export const PathInfoTooltip = (props) => {
@@ -9,6 +9,18 @@ export const PathInfoTooltip = (props) => {
 
     const objSel = obj ? objectiveTypesKeyValue[obj] : null;
     const subjSel = subj ? subjectiveTypesKeyValue[subj] : null;
+
+    const getDrawTypeLabel = (drawType) => {
+        switch(drawType) {
+            case 'phone':
+                return ['Via Mobile', faMobileAlt];
+            case 'location':
+                return ['Via GPS', faLocationArrow];
+            default:
+                return ['Via Desktop', faDesktop]
+        }
+    }
+
     return (
        <div key={'info-tltp-' + type + '-' + id}
             className={'path-list__tltp--content ' + type }>
@@ -58,8 +70,8 @@ export const PathInfoTooltip = (props) => {
            <span className='path-list__tltp--info'>
                     <span className='path-list__tltp--info__label'>{"Created: "}</span>
                     <span className="path-list__sel--label">
-                        <i><FontAwesomeIcon icon={drawType === 'location' ? faLocationArrow : faUser}/></i>
-                        <span>{drawType === 'location' ? 'By GPS' : 'By user'}</span>
+                        <i><FontAwesomeIcon icon={getDrawTypeLabel(drawType)[1]}/></i>
+                        <span>{getDrawTypeLabel(drawType)[0]}</span>
                     </span>
             </span>
            :null}

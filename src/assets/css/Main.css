@@ -1842,7 +1842,7 @@ header {
 
 .bs-popover-auto-start {
   left: 20px !important;
-  max-width: calc(100vw - 90px) !important; }
+  width: calc(100vw - 90px) !important; }
 
 .collapse__notification {
   color: #20adc5;

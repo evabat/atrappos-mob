@@ -270,7 +270,7 @@ const AppComponent = (props) =>  {
     let duration = moment.duration(end.diff(start));
     let minutes = duration.asSeconds();
     end = moment(end).format('YYYY-MM-DD HH:mm:ss');
-    let editObj = {date: end, state: defineEditState(), duration: minutes};
+    let editObj = {date: end, state: defineEditState(), duration: minutes, device: 'mobile'};
     dispatch({...state, edited: [...state.edited, editObj], editProcedure: false})
   }
 
