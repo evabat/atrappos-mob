@@ -216,24 +216,25 @@ class CustomMap extends Component {
                 pathDescr: this.props.pathDescr
             })
         }
+        // The disabling of map's zoom during draw/edit has been commented out, due to users' feedback
         if (prevProps.drawing !== this.props.drawing) {
             const map = this.mapRef.current.leafletElement;
            if (this.props.drawing) {
-               map.gestureHandling.disable();
-               map.touchZoom.disable();
-               map.doubleClickZoom.disable();
-               map.scrollWheelZoom.disable();
-               map.boxZoom.disable();
-               map.keyboard.disable();
-               map.zoomControl.disable();
+                  map.gestureHandling.disable();
+        //        map.touchZoom.disable();
+        //        map.doubleClickZoom.disable();
+        //        map.scrollWheelZoom.disable();
+        //        map.boxZoom.disable();
+        //        map.keyboard.disable();
+        //        map.zoomControl.disable();
            } else {
-               map.gestureHandling.enable();
-               map.touchZoom.enable();
-               map.doubleClickZoom.enable();
-               map.scrollWheelZoom.enable();
-               map.boxZoom.enable();
-               map.keyboard.enable();
-               map.zoomControl.enable();
+                  map.gestureHandling.enable();
+        //        map.touchZoom.enable();
+        //        map.doubleClickZoom.enable();
+        //        map.scrollWheelZoom.enable();
+        //        map.boxZoom.enable();
+        //        map.keyboard.enable();
+        //        map.zoomControl.enable();
            }
         }
 

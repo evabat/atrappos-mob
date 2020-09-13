@@ -264,7 +264,7 @@ const PathListViewComponent = (props) => {
             drawn: pathCopy ? pathCopy.drawn : null,
             evaluations: pathCopy ? JSON.parse(JSON.stringify(pathCopy.evaluations)) : [],
             edited: pathCopy ? JSON.parse(JSON.stringify(pathCopy.edited)) : [],
-            snapped: pathCopy ?  JSON.parse(JSON.stringify(pathCopy.snapped)) : false
+            snapped: pathCopy ?  (pathCopy.snapped ? JSON.parse(JSON.stringify(pathCopy.snapped)) : false) : false
         });
         setValuesDispatched(true);
     }
