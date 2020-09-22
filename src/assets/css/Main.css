@@ -1736,7 +1736,6 @@ header {
   .path-list__subj--label.subjective:before {
     height: 12px;
     width: 12px;
-    margin: -6px 0 5px -17px;
     margin: -6px 0 5px -17px; }
 
 .path-list__titles {

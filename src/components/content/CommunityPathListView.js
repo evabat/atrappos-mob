@@ -227,12 +227,10 @@ const CommunityPathListViewComponent = (props) => {
     };
 
     const showFilteredPaths = (arr) => {
-        if (arr.length > 0) {
-            setVisibleCommunityPaths(arr);
-            ids.forEach((id) => {
-                setViewState(prevState => ({...prevState, [id]: arr.includes(id)}));
-            });
-        }
+        setVisibleCommunityPaths(arr);
+        ids.forEach((id) => {
+            setViewState(prevState => ({...prevState, [id]: arr.includes(id)}));
+        });
     }
 
     const toggleFilterPaths = (e) => {

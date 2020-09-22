@@ -14,7 +14,8 @@ import {
 } from "react-leaflet";
 import Geocoder from 'leaflet-control-geocoder';
 // eslint-disable-next-line
-import { GestureHandling } from "leaflet-gesture-handling";
+// import { GestureHandling } from "leaflet-gesture-handling";
+// import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
 import {loginUser} from "../../services/authService";
 import moment from "moment";
 import {
@@ -25,7 +26,7 @@ import {
 import LocateControl from './LocateControl.js';
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
+
 import {cancelMapEvent, getRandomInt, isFunction, sendGaEvent} from "../../lib/utils";
 import {PathInfoTooltip} from "../ui/PathInfoTooltip";
 
@@ -217,26 +218,14 @@ class CustomMap extends Component {
             })
         }
         // The disabling of map's zoom during draw/edit has been commented out, due to users' feedback
-        if (prevProps.drawing !== this.props.drawing) {
-            const map = this.mapRef.current.leafletElement;
-           if (this.props.drawing) {
-                  map.gestureHandling.disable();
-        //        map.touchZoom.disable();
-        //        map.doubleClickZoom.disable();
-        //        map.scrollWheelZoom.disable();
-        //        map.boxZoom.disable();
-        //        map.keyboard.disable();
-        //        map.zoomControl.disable();
-           } else {
-                  map.gestureHandling.enable();
-        //        map.touchZoom.enable();
-        //        map.doubleClickZoom.enable();
-        //        map.scrollWheelZoom.enable();
-        //        map.boxZoom.enable();
-        //        map.keyboard.enable();
-        //        map.zoomControl.enable();
-           }
-        }
+        // if (prevProps.drawing !== this.props.drawing) {
+        //     const map = this.mapRef.current.leafletElement;
+        //    if (this.props.drawing) {
+        //           map.gestureHandling.disable();
+        //    } else {
+        //           map.gestureHandling.enable();
+        //    }
+        // }
 
         if (prevProps.newPolyCoords !== this.props.newPolyCoords) {
             if (this.props.newPolyCoords.length > 0) {
@@ -323,7 +312,9 @@ class CustomMap extends Component {
 
         window.onpopstate = e => {
             cancelMapEvent(e);
+            this._editableFG.leafletElement.clearLayers();
             this.props.cancelEverything();
+
         }
     }
 
@@ -459,7 +450,7 @@ class CustomMap extends Component {
     }
 
     _onEditStart = (e) => {
-        this.mapRef.current.leafletElement.gestureHandling.disable();
+        // this.mapRef.current.leafletElement.gestureHandling.disable();
         this.setState({
             editStart: moment(new Date())
         }, ()=> {
@@ -469,7 +460,7 @@ class CustomMap extends Component {
 
     _onEditStop = (e) => {
         console.log('_onEditStop', e);
-        this.mapRef.current.leafletElement.gestureHandling.enable();
+        // this.mapRef.current.leafletElement.gestureHandling.enable();
         this.setState({
             editStop: moment(new Date())
         }, ()=> {
@@ -479,13 +470,13 @@ class CustomMap extends Component {
     }
 
     _onDeleteStart = (e) => {
-        this.mapRef.current.leafletElement.gestureHandling.disable();
+        // this.mapRef.current.leafletElement.gestureHandling.disable();
         console.log('_onDeleteStart', e);
     }
 
     _onDeleteStop = (e) => {
         console.log('_onDeleteStop', e);
-        this.mapRef.current.leafletElement.gestureHandling.enable();
+        // this.mapRef.current.leafletElement.gestureHandling.enable();
         this.props.stoppedErasing(true);
     }
 
@@ -543,7 +534,7 @@ class CustomMap extends Component {
                 style={{height: "calc(100vh - 35px)", width: "100%"}}
                 minZoom={8}
                 maxZoom={mapLayers[this.state.tileLayer].maxZoom ? mapLayers[this.state.tileLayer].maxZoom : 19}
-                gestureHandling={true}
+                // gestureHandling={true}
                 center={this.state.currCenter}
                 maxBounds={bounds}
                 zoom={this.state.zoom}

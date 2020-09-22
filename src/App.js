@@ -413,7 +413,7 @@ const AppComponent = (props) =>  {
     dispatch({
       ...state,
       clearMap: false,
-      pathsRefetched: false,
+      pathsRefetched: true,
       recording: false,
       drawing: false,
       eraseProcedure: false,

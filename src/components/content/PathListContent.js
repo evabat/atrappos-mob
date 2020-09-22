@@ -23,7 +23,7 @@ export const PathListContent = () => {
                             {state.drawType && state.drawType === "location" ?
                                 <SnapSwitch type={"selectedPath"}/>:null
                             }
-                        {state.drawType === 'phone' ?
+                        {state.drawType === 'phone' || state.drawType === 'desktop' ?
                         <EditPathBtn />:null}
                         <SavePathBtn type="saveSelectedPath" />
                     </React.Fragment>

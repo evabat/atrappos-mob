@@ -174,12 +174,10 @@ const PathListViewComponent = (props) => {
     };
 
     const showFilteredPaths = (arr) => {
-        if (arr.length > 0) {
-            setVisibleUserPaths(arr);
-            ids.forEach((id) => {
-                setViewState(prevState => ({...prevState, [id]: arr.includes(id)}));
-            });
-        }
+        setVisibleUserPaths(arr);
+        ids.forEach((id) => {
+            setViewState(prevState => ({...prevState, [id]: arr.includes(id)}));
+        });
     }
 
     const toggleFilterPaths = (e) => {
