@@ -814,6 +814,13 @@ header {
       background-color: #F9FBFB;
       top: 0;
       z-index: 1010; }
+      .bottom-container__content h5 > span {
+        width: 55vw;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        vertical-align: bottom; }
 
 .bottom__content {
   height: 100%; }

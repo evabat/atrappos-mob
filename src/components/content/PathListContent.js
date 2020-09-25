@@ -13,8 +13,12 @@ export const PathListContent = () => {
         <div className="path-list__content bottom__content">
             <h5>
                 {!!state.selectedPath ?
-                    <BackToListBtn />:null}
-                {!!state.selectedPath ? "Modifying " + state.pathName : "My paths" }</h5>
+                    <BackToListBtn />
+                :null}
+                    <span>
+                        {!!state.selectedPath ? "Modifying " + state.pathName : "My paths" }
+                    </span>
+            </h5>
                 <React.Fragment>
                 {!state.selectedPath ?
                     <PathListView />:

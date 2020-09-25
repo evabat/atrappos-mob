@@ -54,6 +54,14 @@
       background-color: $porcelain;
       top: 0;
       z-index: 1010;
+       > span {
+         width: 55vw;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         display: inline-block;
+         vertical-align: bottom;
+       }
     }
   }
 }
